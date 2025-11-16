@@ -1,0 +1,1 @@
+enum WorkState { finished, inProgress }

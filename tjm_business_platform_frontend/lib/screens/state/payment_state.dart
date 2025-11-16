@@ -1,0 +1,1 @@
+enum PaymentState { pending, paid }
