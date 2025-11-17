@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/screens/login_screen.dart';
+import 'package:tjm_business_platform/ui/screens/login_screen.dart';
 import 'package:tjm_business_platform_logic/core/model/platform_user.dart';
 import 'package:tjm_business_platform_logic/core/role.dart';
 import 'package:tjm_business_platform_logic/domain/auth.dart';

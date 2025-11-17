@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
-import 'package:tjm_business_platform/screens/login_screen.dart';
+import 'package:tjm_business_platform/ui/screens/login_screen.dart';
 import 'package:tjm_business_platform/secrets.dart';
 import 'package:tjm_business_platform_logic/data/client/client_loader.dart';
 import 'package:window_manager/window_manager.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: AppSettings.appName,
       theme: ThemeData(colorScheme: AppColors.seedColor),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: const LoginScreen(),
     );
   }
