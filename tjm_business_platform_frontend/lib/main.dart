@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/business_specific.dart';
+import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/screens/login_screen.dart';
 import 'package:tjm_business_platform_logic/data/client/client_loader.dart';
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: BusinessSpecific.appName,
+      title: AppSettings.appName,
       theme: ThemeData(colorScheme: AppColors.seedColor),
       themeMode: ThemeMode.system,
       home: const LoginScreen(),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:tjm_business_platform/core/business_specific.dart';
-import 'package:tjm_business_platform/core/strings.dart';
+import 'package:tjm_business_platform/core/app_settings.dart';
+import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/screens/main_screen.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:tjm_business_platform_logic/domain/auth.dart';
@@ -20,7 +19,8 @@ class LoginScreenState extends State<LoginScreen> {
   String password = "";
   bool error = false;
   bool showPassword = false;
-  final FocusNode _focusNode = FocusNode();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
   void _loginAction() async {
     if (user.isNotEmpty && password.isNotEmpty) {
@@ -42,116 +42,108 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: KeyboardListener(
-        focusNode: _focusNode,
-        autofocus: true,
-        onKeyEvent: (KeyEvent event) {
-          if (event is KeyDownEvent &&
-              event.logicalKey == LogicalKeyboardKey.enter) {
-            _loginAction();
-          }
-        },
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            double horizontalPadding = constraints.maxWidth > 600 ? 200 : 16;
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double horizontalPadding = constraints.maxWidth > 600 ? 200 : 16;
 
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: 24,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 400,
-                    minHeight: 600,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      companyBrand(),
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 24,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 400,
+                  minHeight: 600,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    companyBrand(),
 
-                      Text(
-                        AppStrings.login,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        textAlign: .center,
+                    Text(
+                      AppStrings.login,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: .center,
+                    ),
+
+                    if (error)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Text(
+                          AppStrings.userOrPasswordInvalid,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          textAlign: .center,
+                        ),
                       ),
 
-                      if (error)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12.0),
+                    const SizedBox(height: 24.0),
+
+                    TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      focusNode: _emailFocus,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: AppStrings.email,
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => setState(() => user = value),
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_passwordFocus);
+                      },
+                    ),
+
+                    const SizedBox(height: 16.0),
+
+                    TextField(
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: !showPassword,
+                      focusNode: _passwordFocus,
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        labelText: AppStrings.password,
+                        border: OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            showPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () =>
+                              setState(() => showPassword = !showPassword),
+                        ),
+                      ),
+                      onChanged: (value) => setState(() => password = value),
+                      onSubmitted: (_) => _loginAction(),
+                    ),
+
+                    const SizedBox(height: 24.0),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _loginAction,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14.0),
                           child: Text(
-                            "Usuario o contraseña incorrectos",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                            textAlign: .center,
-                          ),
-                        ),
-
-                      const SizedBox(height: 24.0),
-
-                      TextField(
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: AppStrings.email,
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) => setState(() => user = value),
-                      ),
-
-                      const SizedBox(height: 16.0),
-
-                      TextField(
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: !showPassword,
-                        decoration: InputDecoration(
-                          labelText: AppStrings.password,
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              showPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                            onPressed: () =>
-                                setState(() => showPassword = !showPassword),
-                          ),
-                        ),
-                        onChanged: (value) => setState(() => password = value),
-                      ),
-
-                      const SizedBox(height: 24.0),
-
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _loginAction,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 14.0),
-                            child: Text(
-                              "Iniciar sesión",
-                              style: TextStyle(fontSize: 16),
-                            ),
+                            AppStrings.actionLogin,
+                            style: TextStyle(fontSize: 16),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -162,7 +154,7 @@ class LoginScreenState extends State<LoginScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32.0),
         child: Image.asset(
-          BusinessSpecific.companyLogoAsset,
+          AppSettings.companyLogoAsset,
           width: 132.0,
           height: 132.0,
         ),

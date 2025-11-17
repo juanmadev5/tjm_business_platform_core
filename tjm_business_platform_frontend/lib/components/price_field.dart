@@ -14,7 +14,7 @@ TextField priceField(String label, Function(String value) setPrice) {
         final digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
         final number = int.parse(digitsOnly);
 
-        final newText = AppSettings.formatter.format(number);
+        final newText = AppSettings.priceFormat.format(number);
         return TextEditingValue(
           text: newText,
           selection: .collapsed(offset: newText.length),
