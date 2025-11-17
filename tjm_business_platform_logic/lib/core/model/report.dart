@@ -47,4 +47,26 @@ class Report {
       isPaid: json['is_paid'] as bool,
     );
   }
+
+  Report copyWith({
+    String? id,
+    String? author,
+    String? customerId,
+    String? customerName,
+    String? detail,
+    double? price,
+    bool? isPending,
+    bool? isPaid,
+  }) {
+    return Report(
+      id: id ?? this.id,
+      author: author ?? this.author,
+      customerId: customerId ?? this.customerId,
+      customerName: customerName ?? this.customerName,
+      detail: detail ?? this.detail,
+      price: price ?? this.price,
+      isPending: isPending ?? this.isPending,
+      isPaid: isPaid ?? this.isPaid,
+    );
+  }
 }

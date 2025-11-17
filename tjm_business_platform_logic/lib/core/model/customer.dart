@@ -30,4 +30,18 @@ class Customer {
       works: [],
     );
   }
+
+  Customer copyWith({
+    String? id,
+    String? name,
+    String? phoneNumber,
+    List<Report>? works,
+  }) {
+    return Customer(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      works: works ?? this.works,
+    );
+  }
 }

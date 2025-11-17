@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tjm_business_platform/core/business_specific.dart';
 import 'package:tjm_business_platform/core/strings.dart';
-import 'package:tjm_business_platform/data/provider.dart';
 import 'package:tjm_business_platform/screens/main_screen.dart';
+import 'package:tjm_business_platform_logic/core/action_result.dart';
+import 'package:tjm_business_platform_logic/domain/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  Provider provider = Provider();
+  final Auth auth = Auth();
 
   String user = "";
   String password = "";
@@ -21,17 +22,22 @@ class LoginScreenState extends State<LoginScreen> {
   bool showPassword = false;
   final FocusNode _focusNode = FocusNode();
 
-  void _loginAction() {
+  void _loginAction() async {
     if (user.isNotEmpty && password.isNotEmpty) {
-      provider.login(user, password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
+      final result = await auth.login(user, password);
+
+      if (!mounted) return;
+
+      if (result == ActionResult.ok) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      } else {
+        setState(() => error = true);
+      }
     } else {
-      setState(() {
-        error = true;
-      });
+      setState(() => error = true);
     }
   }
 
@@ -44,6 +50,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: KeyboardListener(
         focusNode: _focusNode,
         autofocus: true,
@@ -53,83 +60,97 @@ class LoginScreenState extends State<LoginScreen> {
             _loginAction();
           }
         },
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                companyBrand(),
-                Text(AppStrings.login, style: TextStyle(fontSize: 18.0)),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: SizedBox(
-                    width: 320.0,
-                    height: 64.0,
-                    child: TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: AppStrings.email,
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          user = value;
-                        });
-                      },
-                    ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double horizontalPadding = constraints.maxWidth > 600 ? 200 : 16;
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: 24,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 400,
+                    minHeight: 600,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: SizedBox(
-                    width: 320.0,
-                    height: 64.0,
-                    child: TextField(
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: !showPassword,
-                      decoration: InputDecoration(
-                        labelText: AppStrings.password,
-                        border: OutlineInputBorder(),
-                        suffix: GestureDetector(
-                          child: Icon(
-                            showPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      companyBrand(),
+
+                      Text(
+                        AppStrings.login,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                        textAlign: .center,
+                      ),
+
+                      if (error)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Text(
+                            "Usuario o contraseña incorrectos",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            textAlign: .center,
                           ),
-                          onTap: () {
-                            setState(() {
-                              showPassword = !showPassword;
-                            });
-                          },
+                        ),
+
+                      const SizedBox(height: 24.0),
+
+                      TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: AppStrings.email,
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) => setState(() => user = value),
+                      ),
+
+                      const SizedBox(height: 16.0),
+
+                      TextField(
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !showPassword,
+                        decoration: InputDecoration(
+                          labelText: AppStrings.password,
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              showPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () =>
+                                setState(() => showPassword = !showPassword),
+                          ),
+                        ),
+                        onChanged: (value) => setState(() => password = value),
+                      ),
+
+                      const SizedBox(height: 24.0),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _loginAction,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text(
+                              "Iniciar sesión",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
                         ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          password = value;
-                        });
-                      },
-                    ),
+                    ],
                   ),
                 ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 32.0),
-                  child: SizedBox(
-                    width: 128,
-                    height: 64,
-                    child: FloatingActionButton(
-                      onPressed: () => {_loginAction()},
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Iniciar sesion"),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
