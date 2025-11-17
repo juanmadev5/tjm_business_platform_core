@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/screens/login_screen.dart';
+import 'package:tjm_business_platform/secrets.dart';
 import 'package:tjm_business_platform_logic/data/client/client_loader.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -10,8 +11,8 @@ import 'package:intl/date_symbol_data_local.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ClientLoader().initialize(
-    supabaseUrl: "https://project.supabase.co",
-    supabaseKey: "supersecretkey",
+    supabaseUrl: SUPABASE_URL,
+    supabaseKey: SUPABASE_KEY,
   );
   await initializeDateFormatting('es', null);
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
