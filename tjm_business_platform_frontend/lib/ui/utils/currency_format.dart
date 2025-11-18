@@ -9,5 +9,5 @@ double parseGsToDouble(String amount) {
 /// Convert a String with format "125.000"
 String formatDoubleToGs(double amount) {
   final formatter = NumberFormat('#,###', 'es_PY'); // Paraguay format
-  return formatter.format(amount).replaceAll(',', '.');
+  return "Gs. ${formatter.format(amount).replaceAll(',', '.')}";
 }
