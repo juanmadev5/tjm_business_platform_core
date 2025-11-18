@@ -35,6 +35,22 @@ class _EditCustomerState extends State<EditCustomer> {
     super.dispose();
   }
 
+  void _deleteCustomer() async {
+    final result = await data.deleteCustomer(widget.customer.id);
+
+    if (!mounted) return;
+
+    if (result == ActionResult.ok) {
+      setState(() {
+        error = false;
+        saved = true;
+      });
+      Navigator.pop(context, true);
+    } else {
+      setState(() => error = true);
+    }
+  }
+
   Future<void> _saveCustomer() async {
     if (_nameController.text.isEmpty || _phoneController.text.isEmpty) {
       setState(() => error = true);
@@ -133,21 +149,33 @@ class _EditCustomerState extends State<EditCustomer> {
         ),
         const SizedBox(height: 32),
         Center(
-          child: SizedBox(
-            width: 200,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: _saveCustomer,
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          child: Row(
+            children: [
+              ElevatedButton(
+                onPressed: _saveCustomer,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  AppStrings.saveCustomer,
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
-              child: Text(
-                AppStrings.saveCustomer,
-                style: TextStyle(fontSize: 16),
+              ElevatedButton(
+                onPressed: _deleteCustomer,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  AppStrings.deleteCustomer,
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],

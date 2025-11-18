@@ -36,6 +36,9 @@ class Data {
   Future<ActionResult> deleteReport(String reportId) async =>
       appDatabase.deleteReport(reportId);
 
+  Future<ActionResult> deleteCustomer(String customerId) async =>
+      appDatabase.deleteCustomer(customerId);
+
   Future<ActionResult> editCustomer(Customer updatedCustomer) async =>
       appDatabase.editCustomer(updatedCustomer);
 

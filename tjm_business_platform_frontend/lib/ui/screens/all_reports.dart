@@ -94,45 +94,54 @@ class _AllReportsState extends State<AllReports> {
           }
 
           if (isDesktop) {
-            // Grid para escritorio
             return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                controller: _scrollController,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 3,
-                ),
-                itemCount: reports.length + (hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index >= reports.length) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final report = reports[index];
-                  return _reportCard(report);
-                },
-              ),
+              padding: .only(left: 128, right: 128),
+              child: desktopView(),
             );
           } else {
-            // Lista para móvil
-            return ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              itemCount: reports.length + (hasMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index >= reports.length) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                final report = reports[index];
-                return _reportCard(report);
-              },
-            );
+            return mobileView();
           }
+        },
+      ),
+    );
+  }
+
+  ListView mobileView() {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      itemCount: reports.length + (hasMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index >= reports.length) {
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final report = reports[index];
+        return _reportCard(report);
+      },
+    );
+  }
+
+  Padding desktopView() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.builder(
+        controller: _scrollController,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 3,
+        ),
+        itemCount: reports.length + (hasMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index >= reports.length) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final report = reports[index];
+          return _reportCard(report);
         },
       ),
     );

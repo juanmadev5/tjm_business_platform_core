@@ -52,4 +52,7 @@ class AppStrings {
   static final netProfit = "Beneficio neto";
   static final totalReports = "Reportes totales";
   static final totalCustomers = "Clientes";
+
+  static final deleteReport = "Eliminar reporte";
+  static final deleteCustomer = "Eliminar cliente";
 }

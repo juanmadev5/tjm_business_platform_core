@@ -94,6 +94,22 @@ class _EditReportState extends State<EditReport> {
     });
   }
 
+  void _deleteReport(Report report) async {
+    final result = await data.deleteReport(report.id);
+
+    if (!mounted) return;
+
+    if (result == ActionResult.ok) {
+      setState(() {
+        error = false;
+        saved = true;
+      });
+      Navigator.pop(context, true);
+    } else {
+      setState(() => error = true);
+    }
+  }
+
   void _saveReport(PlatformUser user) async {
     var formattedPrice = parseGsToDouble(_priceController.text);
     var rep = Report(
@@ -132,108 +148,128 @@ class _EditReportState extends State<EditReport> {
   Widget build(BuildContext context) {
     var user = widget.user;
 
+    bool isDesktop = MediaQuery.of(context).size.width > 800;
+    var insets = EdgeInsets.all(16.0);
+    if (isDesktop) {
+      insets = EdgeInsets.only(left: 164, right: 164);
+    } else {
+      EdgeInsets.all(16.0);
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text(AppStrings.createReport)),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(padding: insets, child: view(context, user)),
+      ),
+    );
+  }
+
+  Column view(BuildContext context, PlatformUser user) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (error)
+          Text(
+            AppStrings.errorOnSaveReport,
+            style: TextStyle(color: AppColors.seedColor.error),
+          ),
+        if (saved)
+          Text(
+            AppStrings.reportSaveSuccess,
+            style: TextStyle(color: AppColors.seedColor.primary),
+          ),
+        nameField(
+          AppStrings.customerName,
+          (value) => _onNameChanged(value),
+          _nameFocus,
+          () => FocusScope.of(context).requestFocus(_detailFocus),
+          _nameController,
+        ),
+        if (!isSearching && suggestions.isNotEmpty)
+          Column(
+            children: suggestions.map((customer) {
+              return ListTile(
+                title: Text(customer["name"]!),
+                subtitle: Text(customer["phoneNumber"]!),
+                onTap: () {
+                  setState(() {
+                    _nameController.text = customer["name"]!;
+                    selectedCustomerId = customer["id"]!;
+                    suggestions.clear();
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        SizedBox(height: 16),
+        detailsField(
+          AppStrings.workDetails,
+          (detail) => setState(() {
+            _detailsController.text = detail;
+          }),
+          _detailFocus,
+          () => FocusScope.of(context).requestFocus(_priceFocus),
+          controller: _detailsController,
+        ),
+        SizedBox(height: 16),
+        priceField(
+          AppStrings.priceGs,
+          (p) => setState(() {
+            _priceController.text = p;
+          }),
+          _priceFocus,
+          () {},
+          controller: _priceController,
+        ),
+        Row(
+          children: [
+            Text(AppStrings.completed),
+            Checkbox(
+              value: isCompleted,
+              onChanged: (bool? value) {
+                setState(() {
+                  isCompleted = value!;
+                });
+              },
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text(AppStrings.paid),
+            Checkbox(
+              value: isPaid,
+              onChanged: (bool? value) {
+                setState(() {
+                  isPaid = value!;
+                });
+              },
+            ),
+          ],
+        ),
+        SizedBox(height: 16),
+        Center(
+          child: Row(
             children: [
-              if (error)
-                Text(
-                  AppStrings.errorOnSaveReport,
-                  style: TextStyle(color: AppColors.seedColor.error),
-                ),
-              if (saved)
-                Text(
-                  AppStrings.reportSaveSuccess,
-                  style: TextStyle(color: AppColors.seedColor.primary),
-                ),
-              nameField(
-                AppStrings.customerName,
-                (value) => _onNameChanged(value),
-                _nameFocus,
-                () => FocusScope.of(context).requestFocus(_detailFocus),
-                _nameController,
+              ElevatedButton(
+                onPressed: () {
+                  _saveReport(user);
+                },
+                child: Text(AppStrings.saveReport),
               ),
-              if (!isSearching && suggestions.isNotEmpty)
-                Column(
-                  children: suggestions.map((customer) {
-                    return ListTile(
-                      title: Text(customer["name"]!),
-                      subtitle: Text(customer["phoneNumber"]!),
-                      onTap: () {
-                        setState(() {
-                          _nameController.text = customer["name"]!;
-                          selectedCustomerId = customer["id"]!;
-                          suggestions.clear();
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              SizedBox(height: 16),
-              detailsField(
-                AppStrings.workDetails,
-                (detail) => setState(() {
-                  _detailsController.text = detail;
-                }),
-                _detailFocus,
-                () => FocusScope.of(context).requestFocus(_priceFocus),
-                controller: _detailsController,
+              SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  _deleteReport(widget.reportToEdit);
+                },
+                child: Text(AppStrings.deleteReport),
               ),
-              SizedBox(height: 16),
-              priceField(
-                AppStrings.priceGs,
-                (p) => setState(() {
-                  _priceController.text = p;
-                }),
-                _priceFocus,
-                () {},
-                controller: _priceController,
-              ),
-              Row(
-                children: [
-                  Text(AppStrings.completed),
-                  Checkbox(
-                    value: isCompleted,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isCompleted = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(AppStrings.paid),
-                  Checkbox(
-                    value: isPaid,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isPaid = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    _saveReport(user);
-                  },
-                  child: Text(AppStrings.saveReport),
-                ),
-              ),
-              SizedBox(height: 16),
             ],
           ),
         ),
-      ),
+        SizedBox(height: 16),
+      ],
     );
   }
 }

@@ -229,6 +229,19 @@ class DataRepository {
     }
   }
 
+  Future<ActionResult> deleteCustomer(String customerId) async {
+    if (!_isLoggedIn()) {
+      return ActionResult.error;
+    }
+    try {
+      await client!.from('customers').delete().eq('id', customerId);
+      return ActionResult.ok;
+    } catch (e) {
+      print('Error deleting customer: $e');
+      return ActionResult.error;
+    }
+  }
+
   Future<ActionResult> editCustomer(Customer updatedCustomer) async {
     if (!_isLoggedIn()) {
       return ActionResult.error;
