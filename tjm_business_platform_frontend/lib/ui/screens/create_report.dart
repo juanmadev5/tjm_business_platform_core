@@ -105,7 +105,7 @@ class _CreateReportState extends State<CreateReport> {
       appBar: AppBar(title: Text(AppStrings.createReport)),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: .start,
             children: [
