@@ -69,48 +69,86 @@ class _AllCustomersState extends State<AllCustomers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.customers)),
-      body: _body(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
+
+          if (customers.isEmpty && isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (isDesktop) {
+            // Grid para escritorio
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                controller: _scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 3,
+                ),
+                itemCount: customers.length + (hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= customers.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final customer = customers[index];
+                  return _customerCard(customer);
+                },
+              ),
+            );
+          } else {
+            // Lista para móvil
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: customers.length + (hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= customers.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final customer = customers[index];
+                return _customerCard(customer);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget _body() {
-    if (customers.isEmpty && isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return ListView.builder(
-        controller: _scrollController,
-        itemCount: customers.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= customers.length) {
-            return Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
+  Widget _customerCard(Customer customer) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        title: Text(
+          customer.name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(customer.phoneNumber),
+        trailing: IconButton(
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EditCustomer(customer: customer),
+              ),
             );
-          }
 
-          final customer = customers[index];
-          return ListTile(
-            leading: IconButton(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EditCustomer(customer: customer),
-                  ),
-                );
-
-                if (result == true) {
-                  await _fetchCustomers(reset: true);
-                }
-              },
-              icon: Icon(Icons.edit, color: AppColors.seedColor.primary),
-            ),
-
-            title: Text(customer.name),
-            subtitle: Text(customer.phoneNumber),
-          );
-        },
-      );
-    }
+            if (result == true) {
+              await _fetchCustomers(reset: true);
+            }
+          },
+          icon: Icon(Icons.chevron_right, color: AppColors.seedColor.primary),
+        ),
+      ),
+    );
   }
 }

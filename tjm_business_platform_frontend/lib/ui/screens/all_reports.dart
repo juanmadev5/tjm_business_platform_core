@@ -85,43 +85,82 @@ class _AllReportsState extends State<AllReports> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.reports)),
-      body: body(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
+
+          if (reports.isEmpty && isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (isDesktop) {
+            // Grid para escritorio
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                controller: _scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 3,
+                ),
+                itemCount: reports.length + (hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= reports.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final report = reports[index];
+                  return _reportCard(report);
+                },
+              ),
+            );
+          } else {
+            // Lista para móvil
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: reports.length + (hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= reports.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final report = reports[index];
+                return _reportCard(report);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 
-  dynamic body() {
-    if (reports.isEmpty && isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return ListView.builder(
-        controller: _scrollController,
-        itemCount: reports.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= reports.length) {
-            return Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          final report = reports[index];
-          return ListTile(
-            leading: IconButton(
-              onPressed: () async {
-                await _openEditReport(report);
-              },
-              icon: Icon(Icons.edit, color: AppColors.seedColor.primary),
-            ),
-            title: Text(report.customerName),
-            subtitle: Text(
-              report.detail,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: Text(formatDoubleToGs(report.price)),
-          );
-        },
-      );
-    }
+  Widget _reportCard(Report report) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: IconButton(
+          onPressed: () async {
+            await _openEditReport(report);
+          },
+          icon: Icon(Icons.edit, color: AppColors.seedColor.primary),
+        ),
+        title: Text(
+          report.customerName,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          report.detail,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Text(formatDoubleToGs(report.price)),
+      ),
+    );
   }
 }

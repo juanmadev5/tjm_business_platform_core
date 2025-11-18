@@ -59,7 +59,6 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
       setState(() {
         error = false;
         saved = true;
-
         _nameController.clear();
         _detailController.clear();
         _quantityController.clear();
@@ -83,69 +82,128 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.registerPurchase)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (error)
-              Text(
-                AppStrings.errorOnSavePurchase,
-                style: TextStyle(color: AppColors.seedColor.error),
-              ),
-            if (saved)
-              Text(
-                AppStrings.purchaseSaveSuccess,
-                style: TextStyle(color: AppColors.seedColor.primary),
-              ),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: AppStrings.expenseName),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _detailController,
-              decoration: InputDecoration(labelText: AppStrings.expenseDetails),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _quantityController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: AppStrings.quantity),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _priceController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: AppStrings.unitaryPrice),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                TextInputFormatter.withFunction((oldValue, newValue) {
-                  if (newValue.text.isEmpty) return newValue;
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
 
-                  final digitsOnly = newValue.text.replaceAll(
-                    RegExp(r'[^0-9]'),
-                    '',
-                  );
-                  final number = int.parse(digitsOnly);
+          final content = SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (error)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      AppStrings.errorOnSavePurchase,
+                      style: TextStyle(color: AppColors.seedColor.error),
+                    ),
+                  ),
+                if (saved)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      AppStrings.purchaseSaveSuccess,
+                      style: TextStyle(color: AppColors.seedColor.primary),
+                    ),
+                  ),
+                _buildTextField(_nameController, AppStrings.expenseName),
+                const SizedBox(height: 16),
+                _buildTextField(_detailController, AppStrings.expenseDetails),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  _quantityController,
+                  AppStrings.quantity,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  _priceController,
+                  AppStrings.unitaryPrice,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      if (newValue.text.isEmpty) return newValue;
 
-                  final newText = AppSettings.priceFormat.format(number);
-                  return TextEditingValue(
-                    text: newText,
-                    selection: .collapsed(offset: newText.length),
-                  );
-                }),
+                      final digitsOnly = newValue.text.replaceAll(
+                        RegExp(r'[^0-9]'),
+                        '',
+                      );
+                      final number = int.parse(digitsOnly);
+
+                      final newText = AppSettings.priceFormat.format(number);
+                      return TextEditingValue(
+                        text: newText,
+                        selection: TextSelection.collapsed(
+                          offset: newText.length,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _saveExpense,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 32.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.saveExpense,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 32),
-            Center(
-              child: ElevatedButton(
-                onPressed: _saveExpense,
-                child: Text(AppStrings.saveExpense),
+          );
+
+          if (isDesktop) {
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Card(
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  margin: const EdgeInsets.all(32),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: content,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return content;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
     );
   }

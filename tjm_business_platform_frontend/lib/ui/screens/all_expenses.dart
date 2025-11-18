@@ -68,35 +68,74 @@ class _AllExpensesState extends State<AllExpenses> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.purchases)),
-      body: _body(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
+
+          if (expenses.isEmpty && isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (isDesktop) {
+            // Grid para escritorio
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                controller: _scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 3,
+                ),
+                itemCount: expenses.length + (hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= expenses.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final expense = expenses[index];
+                  return _expenseCard(expense);
+                },
+              ),
+            );
+          } else {
+            // Lista para móvil
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: expenses.length + (hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= expenses.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final expense = expenses[index];
+                return _expenseCard(expense);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget _body() {
-    if (expenses.isEmpty && isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return ListView.builder(
-        controller: _scrollController,
-        itemCount: expenses.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= expenses.length) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          final expense = expenses[index];
-          return ListTile(
-            title: Text(expense.name),
-            subtitle: Text(expense.detail),
-            trailing: Text(
-              "${expense.quantity} × ${formatDoubleToGs(expense.price)}",
-            ),
-          );
-        },
-      );
-    }
+  Widget _expenseCard(Expense expense) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        title: Text(
+          expense.name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(expense.detail),
+        trailing: Text(
+          "${expense.quantity} × ${formatDoubleToGs(expense.price)}",
+        ),
+      ),
+    );
   }
 }

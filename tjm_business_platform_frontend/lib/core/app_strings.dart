@@ -45,4 +45,11 @@ class AppStrings {
   static final String quantity = "Cantidad";
   static final String unitaryPrice = "Precio por unidad";
   static final String saveExpense = "Guardar compra";
+
+  static final String generalResume = "Resumen general";
+  static final String totalIncomes = "Ingresos totales";
+  static final String totalExpenses = "Gastos totales";
+  static final netProfit = "Beneficio neto";
+  static final totalReports = "Reportes totales";
+  static final totalCustomers = "Clientes";
 }

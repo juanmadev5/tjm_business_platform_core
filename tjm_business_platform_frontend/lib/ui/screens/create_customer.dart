@@ -28,7 +28,7 @@ class _CreateCustomerState extends State<CreateCustomer> {
     }
 
     final newCustomer = Customer(
-      id: Uuid().v4(),
+      id: const Uuid().v4(),
       name: _nameController.text,
       phoneNumber: _phoneController.text,
       works: [],
@@ -61,41 +61,97 @@ class _CreateCustomerState extends State<CreateCustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.registerCustomer)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (error)
-              Text(
-                AppStrings.errorOnSaveCustomer,
-                style: TextStyle(color: AppColors.seedColor.error),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
+          final content = _formContent();
+
+          if (isDesktop) {
+            // Centrar y limitar ancho para escritorio
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Card(
+                  margin: const EdgeInsets.all(32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: content,
+                  ),
+                ),
               ),
-            if (saved)
-              Text(
-                AppStrings.customerSaveSuccess,
-                style: TextStyle(color: AppColors.seedColor.primary),
-              ),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: AppStrings.customerName),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(labelText: AppStrings.phoneNumber),
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 32),
-            Center(
-              child: ElevatedButton(
-                onPressed: _saveCustomer,
-                child: Text(AppStrings.saveCustomer),
-              ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            // Móvil: scroll normal
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: content,
+            );
+          }
+        },
       ),
+    );
+  }
+
+  Widget _formContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (error)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              AppStrings.errorOnSaveCustomer,
+              style: TextStyle(color: AppColors.seedColor.error),
+            ),
+          ),
+        if (saved)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              AppStrings.customerSaveSuccess,
+              style: TextStyle(color: AppColors.seedColor.primary),
+            ),
+          ),
+        TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: AppStrings.customerName,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _phoneController,
+          decoration: InputDecoration(
+            labelText: AppStrings.phoneNumber,
+            border: const OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 32),
+        Center(
+          child: SizedBox(
+            width: 200,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: _saveCustomer,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                AppStrings.saveCustomer,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

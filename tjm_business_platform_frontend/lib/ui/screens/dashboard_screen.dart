@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/utils/currency_format.dart';
 
@@ -17,80 +18,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Dashboard")),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Resumen general",
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
+      appBar: AppBar(title: Text(AppStrings.dashboard)),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
 
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildCard(
-                  context,
-                  title: "Ingresos Totales",
-                  value: formatDoubleToGs(data.totalIncome),
-                  icon: Icons.trending_up,
-                  color: colorScheme.primary,
+                Text(
+                  AppStrings.generalResume,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                _buildCard(
-                  context,
-                  title: "Gastos Totales",
-                  value: formatDoubleToGs(data.totalExpenses),
-                  icon: Icons.trending_down,
-                  color: colorScheme.error,
-                ),
-                _buildCard(
-                  context,
-                  title: "Beneficio Neto",
-                  value: formatDoubleToGs(data.netProfit),
-                  icon: Icons.account_balance_wallet,
-                  color: colorScheme.secondary,
-                ),
-                _buildCard(
-                  context,
-                  title: "Reportes Totales",
-                  value: data.totalReports.toString(),
-                  icon: Icons.receipt_long,
-                  color: colorScheme.tertiary,
-                ),
-                _buildCard(
-                  context,
-                  title: "Clientes",
-                  value: data.totalCustomers.toString(),
-                  icon: Icons.people,
-                  color: colorScheme.primaryContainer,
-                  textColor: colorScheme.onPrimaryContainer,
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    _buildCard(
+                      title: AppStrings.totalIncomes,
+                      value: formatDoubleToGs(data.totalIncome),
+                      icon: Icons.trending_up,
+                      color: colorScheme.primary,
+                      isDesktop: isDesktop,
+                    ),
+                    _buildCard(
+                      title: AppStrings.totalExpenses,
+                      value: formatDoubleToGs(data.totalExpenses),
+                      icon: Icons.trending_down,
+                      color: colorScheme.error,
+                      isDesktop: isDesktop,
+                    ),
+                    _buildCard(
+                      title: AppStrings.netProfit,
+                      value: formatDoubleToGs(data.netProfit),
+                      icon: Icons.account_balance_wallet,
+                      color: colorScheme.secondary,
+                      isDesktop: isDesktop,
+                    ),
+                    _buildCard(
+                      title: AppStrings.totalReports,
+                      value: data.totalReports.toString(),
+                      icon: Icons.receipt_long,
+                      color: colorScheme.tertiary,
+                      isDesktop: isDesktop,
+                    ),
+                    _buildCard(
+                      title: AppStrings.totalCustomers,
+                      value: data.totalCustomers.toString(),
+                      icon: Icons.people,
+                      color: colorScheme.primaryContainer,
+                      textColor: colorScheme.onPrimaryContainer,
+                      isDesktop: isDesktop,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildCard(
-    BuildContext context, {
+  Widget _buildCard({
     required String title,
     required String value,
     required IconData icon,
     required Color color,
     Color? textColor,
+    required bool isDesktop,
   }) {
     final cs = Theme.of(context).colorScheme;
 
     return Container(
-      width: MediaQuery.of(context).size.width > 600 ? 260 : double.infinity,
+      width: isDesktop ? 260 : double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cs.surface,
@@ -99,7 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.15),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(color: cs.outlineVariant),
@@ -128,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: textColor ?? cs.onSurface,
                   ),

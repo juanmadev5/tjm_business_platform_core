@@ -46,84 +46,107 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.seedColor.surface,
-      resizeToAvoidBottomInset: true,
-      body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            companyBrand(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth > 800;
 
-            Text(
-              AppStrings.login,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: .center,
-            ),
-
-            if (error)
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: Text(
-                  AppStrings.userOrPasswordInvalid,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                  textAlign: .center,
+          final content = SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                companyBrand(),
+                Text(
+                  AppStrings.login,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-
-            const SizedBox(height: 24.0),
-
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              focusNode: _emailFocus,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                labelText: AppStrings.email,
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) => setState(() => user = value),
-              onSubmitted: (_) {
-                FocusScope.of(context).requestFocus(_passwordFocus);
-              },
-            ),
-
-            const SizedBox(height: 16.0),
-
-            TextField(
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: !showPassword,
-              focusNode: _passwordFocus,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                labelText: AppStrings.password,
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    showPassword ? Icons.visibility_off : Icons.visibility,
+                if (error)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Text(
+                      AppStrings.userOrPasswordInvalid,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  onPressed: () => setState(() => showPassword = !showPassword),
+                const SizedBox(height: 24.0),
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  focusNode: _emailFocus,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    labelText: AppStrings.email,
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) => setState(() => user = value),
+                  onSubmitted: (_) =>
+                      FocusScope.of(context).requestFocus(_passwordFocus),
                 ),
-              ),
-              onChanged: (value) => setState(() => password = value),
-              onSubmitted: (_) => _loginAction(),
+                const SizedBox(height: 16.0),
+                TextField(
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: !showPassword,
+                  focusNode: _passwordFocus,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: AppStrings.password,
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showPassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () =>
+                          setState(() => showPassword = !showPassword),
+                    ),
+                  ),
+                  onChanged: (value) => setState(() => password = value),
+                  onSubmitted: (_) => _loginAction(),
+                ),
+                const SizedBox(height: 24.0),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _loginAction,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.actionLogin,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
             ),
+          );
 
-            const SizedBox(height: 24.0),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _loginAction,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14.0),
-                  child: Text(
-                    AppStrings.actionLogin,
-                    style: TextStyle(fontSize: 16),
+          if (isDesktop) {
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 450),
+                child: Card(
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  margin: const EdgeInsets.all(32),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: content,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return Center(child: content);
+          }
+        },
       ),
     );
   }
