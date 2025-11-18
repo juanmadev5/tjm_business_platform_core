@@ -1,6 +1,6 @@
 # TJM Business Platform
 
-Es un **sistema de gestión empresarial (ERP/CRM ligero)** diseñado para ayudar a los administradores a llevar un control detallado de las operaciones de su negocio. Permite **monitorear indicadores clave** (ingresos, gastos, beneficio), **gestionar clientes**, y **crear/visualizar/editar reportes** y registros de compras.
+Es un **sistema de gestión empresarial (ERP/CRM ligero)** diseñado para ayudar a los administradores a llevar un control detallado de las operaciones de su negocio. Permite **monitorear indicadores clave** (ingresos, gastos, beneficio), **gestionar clientes**, y **crear/visualizar/editar reportes** y registrar compras.
 
 ## 🖼️ Capturas de Pantalla
 
@@ -27,6 +27,7 @@ Es un **sistema de gestión empresarial (ERP/CRM ligero)** diseñado para ayudar
         Auth auth = Auth();
         Data data = Data();
     ```
+* **Sistema basado en Roles:** Las opciones en la aplicacion se muestran dependiendo de si el usuario es `administrador`, `técnico`, o un `contador`.
 
 ## ⚙️ Configuración e Instalación
 
@@ -68,6 +69,7 @@ const String supabaseAnonKey = 'TU_SUPABASE_ANON_KEY';
 Ejecuta el script SQL en tu instancia de Supabase para crear las tablas necesarias:
 
 ```bash
-# El archivo database.sql contiene el esquema necesario
+# El archivo database.sql contiene el esquema necesario y como configurar un usuario en la base de datos
+# Asegúrate de primero crear un usuario en Supabase Auth.
 # Sube el contenido de database.sql a tu SQL Editor de Supabase.
 ```
