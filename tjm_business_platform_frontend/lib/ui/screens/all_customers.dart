@@ -66,48 +66,7 @@ class _AllCustomersState extends State<AllCustomers> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          height: 48,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: (hasMore && !isLoading)
-                  ? AppColors.seedColor.surfaceContainer
-                  : Color(0x00000000),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (hasMore && !isLoading)
-                  Text("Página $page", style: TextStyle(fontSize: 10)),
-                if (hasMore && !isLoading) SizedBox(width: 16),
-                if (page > 1 && !isLoading)
-                  ElevatedButton(
-                    onPressed: () {
-                      page--;
-                      _fetchCustomers(reset: true);
-                    },
-                    child: Text("<-"),
-                  ),
-                SizedBox(width: 16),
-                if (hasMore && !isLoading)
-                  ElevatedButton(
-                    onPressed: () {
-                      page++;
-                      _fetchCustomers();
-                    },
-                    child: Text("->"),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      body: _body(),
-    );
+    return Scaffold(body: _body());
   }
 
   Widget _body() {

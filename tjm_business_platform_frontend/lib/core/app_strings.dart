@@ -36,4 +36,13 @@ class AppStrings {
   static final String customerSaveSuccess = "Reporte guardado con éxito";
 
   static final String phoneNumber = "Número de teléfono";
+
+  static final String errorOnSavePurchase =
+      "Error al guardar. Verifica los campos.";
+  static final String purchaseSaveSuccess = "Compra registrada correctamente";
+  static final String expenseName = "Nombre del gasto";
+  static final String expenseDetails = "Detalles";
+  static final String quantity = "Cantidad";
+  static final String unitaryPrice = "Precio por unidad";
+  static final String saveExpense = "Guardar compra";
 }

@@ -90,34 +90,34 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
           children: [
             if (error)
               Text(
-                "Error al guardar. Verifica los campos.",
+                AppStrings.errorOnSavePurchase,
                 style: TextStyle(color: AppColors.seedColor.error),
               ),
             if (saved)
               Text(
-                "Compra registrada correctamente",
+                AppStrings.purchaseSaveSuccess,
                 style: TextStyle(color: AppColors.seedColor.primary),
               ),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: "Nombre del gasto"),
+              decoration: InputDecoration(labelText: AppStrings.expenseName),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _detailController,
-              decoration: InputDecoration(labelText: "Detalle"),
+              decoration: InputDecoration(labelText: AppStrings.expenseDetails),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _quantityController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Cantidad"),
+              decoration: InputDecoration(labelText: AppStrings.quantity),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _priceController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Precio por unidad"),
+              decoration: InputDecoration(labelText: AppStrings.unitaryPrice),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
                 TextInputFormatter.withFunction((oldValue, newValue) {
@@ -141,7 +141,7 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
             Center(
               child: ElevatedButton(
                 onPressed: _saveExpense,
-                child: Text("Guardar compra"),
+                child: Text(AppStrings.saveExpense),
               ),
             ),
           ],
