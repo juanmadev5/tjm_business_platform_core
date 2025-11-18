@@ -65,7 +65,6 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => isLoading = true);
     try {
       final profile = await auth.getUserProfile();
-      if (!mounted) return;
 
       if (profile == null) {
         setState(() {
@@ -91,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     List<NavigationItem> items = NavigationItemsProvider.items();
-    final userRole = user!.userRole;
+    final userRole = user?.userRole;
 
     final filteredItems = items.where((item) {
       return item.roles.contains(userRole);
@@ -136,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                 bottom: 4,
               ),
               child: Text(
-                "${greetByHour()} ${user!.name} ${user!.lastName}!",
+                "${greetByHour()} ${user?.name} ${user?.lastName}!",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
