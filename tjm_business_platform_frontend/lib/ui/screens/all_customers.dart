@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
+import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/screens/edit_customer.dart';
 import 'package:tjm_business_platform_logic/domain/data.dart';
 import 'package:tjm_business_platform_logic/core/model/customer.dart';
@@ -66,7 +67,10 @@ class _AllCustomersState extends State<AllCustomers> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _body());
+    return Scaffold(
+      appBar: AppBar(title: Text(AppStrings.customers)),
+      body: _body(),
+    );
   }
 
   Widget _body() {
