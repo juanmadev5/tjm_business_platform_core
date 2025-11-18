@@ -24,8 +24,9 @@ class Data {
   Future<ActionResult> addNewExpense(Expense newExpense) async =>
       appDatabase.addNewExpense(newExpense);
 
-  Future<List<String>> findCustomersByNameFragment(String name) async =>
-      appDatabase.findCustomersByNameFragment(name);
+  Future<List<Map<String, String>>> findCustomersByNameFragment(
+    String name,
+  ) async => appDatabase.findCustomersByNameFragment(name);
 
   Future<ActionResult> deleteReport(String reportId) async =>
       appDatabase.deleteReport(reportId);

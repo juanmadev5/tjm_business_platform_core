@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 
-TextField priceField(String label, Function(String value) setPrice) {
+TextField priceField(
+  String label,
+  Function(String value) setPrice,
+  FocusNode focusNode,
+  Function() onSubmitted,
+) {
   return TextField(
+    focusNode: focusNode,
     keyboardType: .number,
     maxLength: 21,
     inputFormatters: [
@@ -23,6 +29,9 @@ TextField priceField(String label, Function(String value) setPrice) {
     ],
     onChanged: (value) {
       setPrice(value);
+    },
+    onSubmitted: (_) {
+      onSubmitted();
     },
     decoration: InputDecoration(
       prefixIcon: Icon(Icons.attach_money),

@@ -85,11 +85,38 @@ class DataRepository {
     if (!_isLoggedIn()) {
       return ActionResult.error;
     }
+
     try {
+      final customerResponse = await client!
+          .from('customers')
+          .select()
+          .eq('id', newReport.customerId)
+          .maybeSingle();
+
+      String customerId = newReport.customerId;
+
+      if (customerResponse == null) {
+        final result = await client!
+            .from('customers')
+            .insert({
+              'id': customerId,
+              'name': newReport.customerName,
+              'phone_number': "",
+            })
+            .select()
+            .single();
+
+        print("Customer created: $result");
+      }
+
       await client!.from('reports').insert(newReport.toMap());
+
       return ActionResult.ok;
+    } on PostgrestException catch (e) {
+      print("DB error saving report: ${e.message}");
+      return ActionResult.error;
     } catch (e) {
-      print('Error adding new report: $e');
+      print("Unexpected error saving report: $e");
       return ActionResult.error;
     }
   }
@@ -107,17 +134,28 @@ class DataRepository {
     }
   }
 
-  Future<List<String>> findCustomersByNameFragment(String name) async {
+  Future<List<Map<String, String>>> findCustomersByNameFragment(
+    String name,
+  ) async {
     if (!_isLoggedIn()) {
       return List.empty();
     }
+
     try {
       final response = await client!
           .from('customers')
-          .select('name')
+          .select('id, name, phone_number')
           .ilike('name', '%$name%');
 
-      return (response as List).map((e) => e['name'] as String).toList();
+      return (response as List)
+          .map(
+            (e) => {
+              'id': e['id'].toString(),
+              'name': e['name'] as String,
+              'phoneNumber': e['phone_number'] as String,
+            },
+          )
+          .toList();
     } catch (e) {
       print('Error finding customers: $e');
       return [];

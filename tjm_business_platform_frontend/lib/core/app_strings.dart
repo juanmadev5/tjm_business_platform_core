@@ -20,4 +20,13 @@ class AppStrings {
   static final String actionLogin = "Iniciar sesión";
   static final String userOrPasswordInvalid =
       "Usuario o contraseña incorrectos";
+  
+  static final String errorOnSaveReport = "Error al guardar reporte";
+  static final String reportSaveSuccess = "Reporte guardado con éxito";
+  static final String customerName = "Nombre de cliente o empresa";
+  static final String workDetails = "Detalles del trabajo";
+  static final String priceGs = "Precio (Gs.)";
+  static final String completed = "Completado";
+  static final String paid = "Pagado";
+  static final String saveReport = "Guardar reporte";
 }
