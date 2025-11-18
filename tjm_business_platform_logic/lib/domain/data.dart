@@ -12,8 +12,13 @@ class Data {
   DataRepository appDatabase = DataRepository();
 
   Future<List<Report>> getAllReports() => appDatabase.getAllReports();
+  Future<List<Report>> getReportByPage(int page) =>
+      appDatabase.getReportByPage(page);
   Future<List<Customer>> getAllCustomers() => appDatabase.getAllCustomers();
-  Future<List<Expense>> getAllExpenses() => appDatabase.getAllExpenses();
+  Future<List<Customer>> getCustomersByPage(int page) =>
+      appDatabase.getCustomersByPage(page);
+  Future<List<Expense>> getExpensesByPage(int page) =>
+      appDatabase.getExpensesByPage(page);
 
   Future<ActionResult> addNewReport(Report newReport) async =>
       appDatabase.addNewReport(newReport);

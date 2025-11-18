@@ -4,9 +4,10 @@ TextField detailsField(
   String label,
   Function(String detail) setDetail,
   FocusNode focusNode,
-  Function() onSubmitted,
+  Function() onSubmitted, {TextEditingController? controller}
 ) {
   return TextField(
+    controller: controller,
     focusNode: focusNode,
     maxLines: 10,
     decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),

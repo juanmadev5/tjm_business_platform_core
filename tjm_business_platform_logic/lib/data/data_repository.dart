@@ -42,6 +42,34 @@ class DataRepository {
     }
   }
 
+  Future<List<Report>> getReportByPage(int page) async {
+    if (!_isLoggedIn()) {
+      return List.empty();
+    }
+
+    const int pageSize = 15;
+    final int from = (page - 1) * pageSize;
+    final int to = from + pageSize - 1;
+
+    try {
+      final response = await client!
+          .from('reports')
+          .select('*, customers(name)')
+          .range(from, to)
+          .order('created_at', ascending: false);
+
+      return (response as List).map((json) {
+        final customerData = json['customers'] as Map<String, dynamic>?;
+        final customerName = customerData?['name'] as String? ?? 'N/A';
+
+        return Report.fromJson(json, customerName: customerName);
+      }).toList();
+    } catch (e) {
+      print('Error fetching paginated reports: $e');
+      return [];
+    }
+  }
+
   Future<List<Customer>> getAllCustomers() async {
     if (!_isLoggedIn()) {
       return List.empty();
@@ -55,15 +83,41 @@ class DataRepository {
     }
   }
 
-  Future<List<Expense>> getAllExpenses() async {
-    if (!_isLoggedIn()) {
-      return List.empty();
-    }
+  Future<List<Customer>> getCustomersByPage(int page, {int limit = 15}) async {
+    if (!_isLoggedIn()) return [];
+    final from = (page - 1) * limit;
+    final to = from + limit - 1;
+
     try {
-      final response = await client!.from('expenses').select();
+      final response = await client!
+          .from('customers')
+          .select()
+          .order('created_at', ascending: false)
+          .range(from, to);
+
+      return (response as List).map((json) => Customer.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching customers: $e');
+      return [];
+    }
+  }
+
+  Future<List<Expense>> getExpensesByPage(int page, {int limit = 15}) async {
+    if (!_isLoggedIn()) return [];
+
+    final from = (page - 1) * limit;
+    final to = from + limit - 1;
+
+    try {
+      final response = await client!
+          .from('expenses')
+          .select()
+          .order('created_at', ascending: false) // Más recientes primero
+          .range(from, to);
+
       return (response as List).map((json) => Expense.fromJson(json)).toList();
     } catch (e) {
-      print('Error fetching expenses: $e');
+      print('Error fetching paginated expenses: $e');
       return [];
     }
   }

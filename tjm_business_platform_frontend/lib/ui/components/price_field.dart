@@ -6,9 +6,11 @@ TextField priceField(
   String label,
   Function(String value) setPrice,
   FocusNode focusNode,
-  Function() onSubmitted,
-) {
+  Function() onSubmitted, {
+  TextEditingController? controller,
+}) {
   return TextField(
+    controller: controller,
     focusNode: focusNode,
     keyboardType: .number,
     maxLength: 21,

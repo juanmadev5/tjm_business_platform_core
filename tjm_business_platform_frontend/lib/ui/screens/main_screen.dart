@@ -3,9 +3,14 @@ import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_item.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_items_provider.dart';
+import 'package:tjm_business_platform/ui/screens/all_customers.dart';
+import 'package:tjm_business_platform/ui/screens/all_expenses.dart';
+import 'package:tjm_business_platform/ui/screens/all_reports.dart';
+import 'package:tjm_business_platform/ui/screens/create_customer.dart';
 import 'package:tjm_business_platform/ui/screens/create_report.dart';
 import 'package:tjm_business_platform/ui/screens/dashboard_screen.dart';
 import 'package:tjm_business_platform/ui/screens/login_screen.dart';
+import 'package:tjm_business_platform/ui/screens/register_purchase.dart';
 import 'package:tjm_business_platform/ui/utils/get_role.dart';
 import 'package:tjm_business_platform/ui/utils/greet_by_hour.dart';
 import 'package:tjm_business_platform_logic/core/model/platform_user.dart';
@@ -169,6 +174,33 @@ class _MainScreenState extends State<MainScreen> {
                       MaterialPageRoute(
                         builder: (_) => CreateReport(user: user),
                       ),
+                    );
+                  } else if (item.name == AppStrings.reports) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AllReports(user: user!),
+                      ),
+                    );
+                  } else if (item.name == AppStrings.registerCustomer) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => CreateCustomer()),
+                    );
+                  } else if (item.name == AppStrings.customers) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AllCustomers()),
+                    );
+                  } else if (item.name == AppStrings.registerPurchase) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => RegisterPurchase()),
+                    );
+                  } else if (item.name == AppStrings.purchases) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AllExpenses()),
                     );
                   }
                 },
