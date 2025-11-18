@@ -135,107 +135,110 @@ class _CreateReportState extends State<CreateReport> {
   }
 
   Widget _formContent(PlatformUser user) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (error)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              AppStrings.errorOnSaveReport,
-              style: TextStyle(color: AppColors.seedColor.error),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (error)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                AppStrings.errorOnSaveReport,
+                style: TextStyle(color: AppColors.seedColor.error),
+              ),
             ),
+          if (saved)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                AppStrings.reportSaveSuccess,
+                style: TextStyle(color: AppColors.seedColor.primary),
+              ),
+            ),
+          nameField(
+            AppStrings.customerName,
+            (value) {
+              setState(() {
+                name = value;
+              });
+              _onNameChanged(value);
+            },
+            _nameFocus,
+            () => FocusScope.of(context).requestFocus(_detailFocus),
+            _nameController,
           ),
-        if (saved)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              AppStrings.reportSaveSuccess,
-              style: TextStyle(color: AppColors.seedColor.primary),
+          if (!isSearching && suggestions.isNotEmpty)
+            Column(
+              children: suggestions.map((customer) {
+                return ListTile(
+                  title: Text(customer["name"]!),
+                  subtitle: Text(customer["phoneNumber"]!),
+                  onTap: () {
+                    setState(() {
+                      name = customer["name"]!;
+                      selectedCustomerId = customer["id"]!;
+                      _nameController.text = name;
+                      suggestions.clear();
+                    });
+                  },
+                );
+              }).toList(),
             ),
+          const SizedBox(height: 16),
+          detailsField(
+            AppStrings.workDetails,
+            (detail) => setState(() => details = detail),
+            _detailFocus,
+            () => FocusScope.of(context).requestFocus(_priceFocus),
           ),
-        nameField(
-          AppStrings.customerName,
-          (value) {
-            setState(() {
-              name = value;
-            });
-            _onNameChanged(value);
-          },
-          _nameFocus,
-          () => FocusScope.of(context).requestFocus(_detailFocus),
-          _nameController,
-        ),
-        if (!isSearching && suggestions.isNotEmpty)
-          Column(
-            children: suggestions.map((customer) {
-              return ListTile(
-                title: Text(customer["name"]!),
-                subtitle: Text(customer["phoneNumber"]!),
-                onTap: () {
-                  setState(() {
-                    name = customer["name"]!;
-                    selectedCustomerId = customer["id"]!;
-                    _nameController.text = name;
-                    suggestions.clear();
-                  });
-                },
-              );
-            }).toList(),
+          const SizedBox(height: 16),
+          priceField(
+            AppStrings.priceGs,
+            (p) => setState(() => price = p),
+            _priceFocus,
+            () {},
           ),
-        const SizedBox(height: 16),
-        detailsField(
-          AppStrings.workDetails,
-          (detail) => setState(() => details = detail),
-          _detailFocus,
-          () => FocusScope.of(context).requestFocus(_priceFocus),
-        ),
-        const SizedBox(height: 16),
-        priceField(
-          AppStrings.priceGs,
-          (p) => setState(() => price = p),
-          _priceFocus,
-          () {},
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(child: Text(AppStrings.completed)),
-            Checkbox(
-              value: isCompleted,
-              onChanged: (bool? value) => setState(() => isCompleted = value!),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(child: Text(AppStrings.paid)),
-            Checkbox(
-              value: isPaid,
-              onChanged: (bool? value) => setState(() => isPaid = value!),
-            ),
-          ],
-        ),
-        const SizedBox(height: 32),
-        Center(
-          child: SizedBox(
-            width: 200,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => _saveReport(user),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: Text(AppStrings.completed)),
+              Checkbox(
+                value: isCompleted,
+                onChanged: (bool? value) =>
+                    setState(() => isCompleted = value!),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: Text(AppStrings.paid)),
+              Checkbox(
+                value: isPaid,
+                onChanged: (bool? value) => setState(() => isPaid = value!),
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Center(
+            child: SizedBox(
+              width: 200,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () => _saveReport(user),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  AppStrings.saveReport,
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
-              child: Text(
-                AppStrings.saveReport,
-                style: const TextStyle(fontSize: 16),
-              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

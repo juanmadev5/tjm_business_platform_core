@@ -18,7 +18,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.dashboard)),
+      appBar: AppBar(title: Text(AppStrings.generalResume)),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth > 800;
@@ -28,60 +28,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppStrings.generalResume,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
                 const SizedBox(height: 16),
-                Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: [
-                    _buildCard(
-                      title: AppStrings.totalIncomes,
-                      value: formatDoubleToGs(data.totalIncome),
-                      icon: Icons.trending_up,
-                      color: colorScheme.primary,
-                      isDesktop: isDesktop,
-                    ),
-                    _buildCard(
-                      title: AppStrings.totalExpenses,
-                      value: formatDoubleToGs(data.totalExpenses),
-                      icon: Icons.trending_down,
-                      color: colorScheme.error,
-                      isDesktop: isDesktop,
-                    ),
-                    _buildCard(
-                      title: AppStrings.netProfit,
-                      value: formatDoubleToGs(data.netProfit),
-                      icon: Icons.account_balance_wallet,
-                      color: colorScheme.secondary,
-                      isDesktop: isDesktop,
-                    ),
-                    _buildCard(
-                      title: AppStrings.totalReports,
-                      value: data.totalReports.toString(),
-                      icon: Icons.receipt_long,
-                      color: colorScheme.tertiary,
-                      isDesktop: isDesktop,
-                    ),
-                    _buildCard(
-                      title: AppStrings.totalCustomers,
-                      value: data.totalCustomers.toString(),
-                      icon: Icons.people,
-                      color: colorScheme.primaryContainer,
-                      textColor: colorScheme.onPrimaryContainer,
-                      isDesktop: isDesktop,
-                    ),
-                  ],
-                ),
+                if (isDesktop)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 128, right: 128),
+                    child: Center(child: wrap(data, colorScheme, isDesktop)),
+                  )
+                else
+                  wrap(data, colorScheme, isDesktop),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Wrap wrap(DashboardDataModel data, ColorScheme colorScheme, bool isDesktop) {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        _buildCard(
+          title: AppStrings.totalIncomes,
+          value: formatDoubleToGs(data.totalIncome),
+          icon: Icons.trending_up,
+          color: colorScheme.primary,
+          isDesktop: isDesktop,
+        ),
+        _buildCard(
+          title: AppStrings.totalExpenses,
+          value: formatDoubleToGs(data.totalExpenses),
+          icon: Icons.trending_down,
+          color: colorScheme.error,
+          isDesktop: isDesktop,
+        ),
+        _buildCard(
+          title: AppStrings.netProfit,
+          value: formatDoubleToGs(data.netProfit),
+          icon: Icons.account_balance_wallet,
+          color: colorScheme.secondary,
+          isDesktop: isDesktop,
+        ),
+        _buildCard(
+          title: AppStrings.totalReports,
+          value: data.totalReports.toString(),
+          icon: Icons.receipt_long,
+          color: colorScheme.tertiary,
+          isDesktop: isDesktop,
+        ),
+        _buildCard(
+          title: AppStrings.totalCustomers,
+          value: data.totalCustomers.toString(),
+          icon: Icons.people,
+          color: colorScheme.primaryContainer,
+          textColor: colorScheme.onPrimaryContainer,
+          isDesktop: isDesktop,
+        ),
+      ],
     );
   }
 
