@@ -89,59 +89,60 @@ class _AllReportsState extends State<AllReports> {
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth > 800;
 
-          if (reports.isEmpty && isLoading) {
+          if (isLoading && reports.isEmpty) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (reports.isEmpty) {
+            return const Center(
+              child: Text(
+                "No hay reportes creados",
+                style: TextStyle(fontSize: 18),
+              ),
+            );
           }
 
           if (isDesktop) {
             return Padding(
-              padding: .only(left: 128, right: 128),
-              child: desktopView(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 128,
+                vertical: 16,
+              ),
+              child: GridView.builder(
+                controller: _scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 3,
+                ),
+                itemCount: reports.length + (hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= reports.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final report = reports[index];
+                  return _reportCard(report);
+                },
+              ),
             );
           } else {
-            return mobileView();
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: reports.length + (hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= reports.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final report = reports[index];
+                return _reportCard(report);
+              },
+            );
           }
-        },
-      ),
-    );
-  }
-
-  ListView mobileView() {
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      itemCount: reports.length + (hasMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index >= reports.length) {
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final report = reports[index];
-        return _reportCard(report);
-      },
-    );
-  }
-
-  Padding desktopView() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: GridView.builder(
-        controller: _scrollController,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 3,
-        ),
-        itemCount: reports.length + (hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= reports.length) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final report = reports[index];
-          return _reportCard(report);
         },
       ),
     );
@@ -168,7 +169,61 @@ class _AllReportsState extends State<AllReports> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: Text(formatDoubleToGs(report.price)),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              formatDoubleToGs(report.price),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  margin: const EdgeInsets.only(right: 4),
+                  decoration: BoxDecoration(
+                    color: report.isPending
+                        ? Colors.orange.withValues(alpha: 0.2)
+                        : Colors.blue.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    report.isPending ? "Pendiente" : "Completado",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: report.isPending ? Colors.orange : Colors.blue,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: report.isPaid
+                        ? Colors.green.withValues(alpha: 0.2)
+                        : Colors.red.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    report.isPaid ? "Pagado" : "No pagado",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: report.isPaid ? Colors.green : Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

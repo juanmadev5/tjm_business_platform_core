@@ -44,6 +44,8 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.seedColor.surface,
       body: LayoutBuilder(
@@ -54,38 +56,53 @@ class LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 companyBrand(),
                 Text(
                   AppStrings.login,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 if (error)
                   Padding(
                     padding: const EdgeInsets.only(top: 12.0),
-                    child: Text(
-                      AppStrings.userOrPasswordInvalid,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
+                    child: AnimatedOpacity(
+                      opacity: error ? 1 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(
+                        AppStrings.userOrPasswordInvalid,
+                        style: TextStyle(
+                          color: theme.colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
-                const SizedBox(height: 24.0),
+                const SizedBox(height: 28.0),
+
+                // Email
                 TextField(
                   keyboardType: TextInputType.emailAddress,
                   focusNode: _emailFocus,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: AppStrings.email,
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.email),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onChanged: (value) => setState(() => user = value),
                   onSubmitted: (_) =>
                       FocusScope.of(context).requestFocus(_passwordFocus),
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 18.0),
+
+                // Password
                 TextField(
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: !showPassword,
@@ -93,7 +110,10 @@ class LoginScreenState extends State<LoginScreen> {
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     labelText: AppStrings.password,
-                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.lock),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         showPassword ? Icons.visibility_off : Icons.visibility,
@@ -105,20 +125,23 @@ class LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) => setState(() => password = value),
                   onSubmitted: (_) => _loginAction(),
                 ),
-                const SizedBox(height: 24.0),
+                const SizedBox(height: 32.0),
+
+                // Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loginAction,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(vertical: 18.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
+                      elevation: 3,
                     ),
                     child: Text(
                       AppStrings.actionLogin,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 17),
                     ),
                   ),
                 ),
@@ -129,15 +152,15 @@ class LoginScreenState extends State<LoginScreen> {
           if (isDesktop) {
             return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 450),
+                constraints: const BoxConstraints(maxWidth: 480),
                 child: Card(
-                  elevation: 6,
+                  elevation: 8,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  margin: const EdgeInsets.all(32),
+                  margin: const EdgeInsets.all(40),
                   child: Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(36),
                     child: content,
                   ),
                 ),
@@ -153,13 +176,13 @@ class LoginScreenState extends State<LoginScreen> {
 
   Padding companyBrand() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
+      padding: const EdgeInsets.only(bottom: 30.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32.0),
+        borderRadius: BorderRadius.circular(40.0),
         child: Image.asset(
           AppSettings.companyLogoAsset,
-          width: 132.0,
-          height: 132.0,
+          width: 140.0,
+          height: 140.0,
         ),
       ),
     );

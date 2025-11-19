@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 
 TextField priceField(
@@ -36,9 +37,12 @@ TextField priceField(
       onSubmitted();
     },
     decoration: InputDecoration(
-      prefixIcon: Icon(Icons.attach_money),
       labelText: label,
-      border: OutlineInputBorder(),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: AppColors.seedColor.primary, width: 2),
+      ),
     ),
   );
 }

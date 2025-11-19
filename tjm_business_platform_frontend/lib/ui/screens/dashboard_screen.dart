@@ -14,7 +14,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    final data = widget.data!;
+    final data = widget.data;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -22,6 +22,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth > 800;
+
+          if (data == null) {
+            return Center(child: Text("loading"));
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),

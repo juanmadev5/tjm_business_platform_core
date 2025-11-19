@@ -19,12 +19,8 @@ class DataRepository {
   }
 
   Auth auth = Auth();
-  bool _isLoggedIn() => auth.isLoggedIn();
 
   Future<List<Report>> getAllReports() async {
-    if (!_isLoggedIn()) {
-      return List.empty();
-    }
     try {
       final response = await client!
           .from('reports')
@@ -43,10 +39,6 @@ class DataRepository {
   }
 
   Future<List<Report>> getReportByPage(int page) async {
-    if (!_isLoggedIn()) {
-      return List.empty();
-    }
-
     const int pageSize = 15;
     final int from = (page - 1) * pageSize;
     final int to = from + pageSize - 1;
@@ -71,9 +63,6 @@ class DataRepository {
   }
 
   Future<List<Customer>> getAllCustomers() async {
-    if (!_isLoggedIn()) {
-      return List.empty();
-    }
     try {
       final response = await client!.from('customers').select();
       return (response as List).map((json) => Customer.fromJson(json)).toList();
@@ -84,7 +73,6 @@ class DataRepository {
   }
 
   Future<List<Customer>> getCustomersByPage(int page, {int limit = 15}) async {
-    if (!_isLoggedIn()) return [];
     final from = (page - 1) * limit;
     final to = from + limit - 1;
 
@@ -103,8 +91,6 @@ class DataRepository {
   }
 
   Future<List<Expense>> getExpensesByPage(int page, {int limit = 15}) async {
-    if (!_isLoggedIn()) return [];
-
     final from = (page - 1) * limit;
     final to = from + limit - 1;
 
@@ -123,9 +109,6 @@ class DataRepository {
   }
 
   Future<ActionResult> addNewCustomer(Customer newCustomer) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!.from('customers').insert(newCustomer.toMap());
       return ActionResult.ok;
@@ -136,10 +119,6 @@ class DataRepository {
   }
 
   Future<ActionResult> addNewReport(Report newReport) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
-
     try {
       final customerResponse = await client!
           .from('customers')
@@ -176,9 +155,6 @@ class DataRepository {
   }
 
   Future<ActionResult> addNewExpense(Expense newExpense) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!.from('expenses').insert(newExpense.toMap());
       return ActionResult.ok;
@@ -191,10 +167,6 @@ class DataRepository {
   Future<List<Map<String, String>>> findCustomersByNameFragment(
     String name,
   ) async {
-    if (!_isLoggedIn()) {
-      return List.empty();
-    }
-
     try {
       final response = await client!
           .from('customers')
@@ -217,9 +189,6 @@ class DataRepository {
   }
 
   Future<ActionResult> deleteReport(String reportId) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!.from('reports').delete().eq('id', reportId);
       return ActionResult.ok;
@@ -230,9 +199,6 @@ class DataRepository {
   }
 
   Future<ActionResult> deleteCustomer(String customerId) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!.from('customers').delete().eq('id', customerId);
       return ActionResult.ok;
@@ -243,9 +209,6 @@ class DataRepository {
   }
 
   Future<ActionResult> editCustomer(Customer updatedCustomer) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!
           .from('customers')
@@ -260,9 +223,6 @@ class DataRepository {
   }
 
   Future<ActionResult> editReport(Report updatedReport) async {
-    if (!_isLoggedIn()) {
-      return ActionResult.error;
-    }
     try {
       await client!
           .from('reports')
@@ -277,9 +237,6 @@ class DataRepository {
   }
 
   Future<double> getTotalIncome() async {
-    if (!_isLoggedIn()) {
-      throw Exception("Invalid operation, need to be logged in");
-    }
     try {
       final response = await client!
           .from('reports')
@@ -303,9 +260,6 @@ class DataRepository {
   }
 
   Future<double> getTotalExpenses() async {
-    if (!_isLoggedIn()) {
-      throw Exception("Invalid operation, need to be logged in");
-    }
     try {
       final response = await client!.from('expenses').select('price');
 
@@ -326,9 +280,6 @@ class DataRepository {
   }
 
   Future<double> getNetProfit() async {
-    if (!_isLoggedIn()) {
-      throw Exception("Invalid operation, need to be logged in");
-    }
     final income = await getTotalIncome();
     final expenses = await getTotalExpenses();
     return income - expenses;

@@ -43,6 +43,9 @@ class _CreateReportState extends State<CreateReport> {
     setState(() {
       name = value;
       isSearching = true;
+      if (selectedCustomerId != null) {
+        selectedCustomerId = null;
+      }
     });
 
     if (value.isEmpty) {
@@ -72,7 +75,7 @@ class _CreateReportState extends State<CreateReport> {
       customerName: name,
       detail: details,
       price: double.parse(formattedPrice.toString()),
-      isPending: isCompleted,
+      isPending: !isCompleted,
       isPaid: isPaid,
     );
 
@@ -103,13 +106,13 @@ class _CreateReportState extends State<CreateReport> {
       appBar: AppBar(title: Text(AppStrings.createReport)),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 800;
-          final content = _formContent(user);
+          final isDesktop = constraints.maxWidth > 900;
+          final content = _formContent(user, isDesktop);
 
           if (isDesktop) {
             return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
+                constraints: const BoxConstraints(maxWidth: 1100),
                 child: Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -134,111 +137,171 @@ class _CreateReportState extends State<CreateReport> {
     );
   }
 
-  Widget _formContent(PlatformUser user) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (error)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                AppStrings.errorOnSaveReport,
-                style: TextStyle(color: AppColors.seedColor.error),
-              ),
+  Widget _formContent(PlatformUser user, bool isDesktop) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (error)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: Text(
+              AppStrings.errorOnSaveReport,
+              style: TextStyle(color: AppColors.seedColor.error),
             ),
-          if (saved)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                AppStrings.reportSaveSuccess,
-                style: TextStyle(color: AppColors.seedColor.primary),
-              ),
+          ),
+        if (saved)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: Text(
+              AppStrings.reportSaveSuccess,
+              style: TextStyle(color: AppColors.seedColor.primary),
             ),
-          nameField(
-            AppStrings.customerName,
-            (value) {
+          ),
+
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (!isDesktop) {
+              return Column(children: _formFields(user));
+            }
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _formFields(user)[0],
+                      if (!isSearching && suggestions.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        _formFields(user)[1],
+                      ],
+                      const SizedBox(height: 16),
+                      _formFields(user)[2],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 32),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _formFields(user)[3],
+                      const SizedBox(height: 16),
+                      _formFields(user)[4],
+                      const SizedBox(height: 24),
+                      Align(
+                        alignment: Alignment.center,
+                        child: _saveButton(user),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+
+        const SizedBox(height: 32),
+        if (!isDesktop) Center(child: _saveButton(user)),
+      ],
+    );
+  }
+
+  Widget _saveButton(PlatformUser user) {
+    return SizedBox(
+      width: 200,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: () => _saveReport(user),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.seedColor.onSecondary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          AppStrings.saveReport,
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _formFields(PlatformUser user) {
+    var isDesktop = MediaQuery.of(context).size.width > 800;
+    return [
+      nameField(
+        AppStrings.customerName,
+        (value) {
+          setState(() {
+            name = value;
+          });
+          _onNameChanged(value);
+        },
+        _nameFocus,
+        () => FocusScope.of(context).requestFocus(_detailFocus),
+        _nameController,
+      ),
+
+      Column(
+        children: suggestions.map((customer) {
+          return ListTile(
+            title: Text(customer["name"]!),
+            subtitle: Text(customer["phoneNumber"]!),
+            onTap: () {
               setState(() {
-                name = value;
+                name = customer["name"]!;
+                selectedCustomerId = customer["id"]!;
+                _nameController.text = name;
+                suggestions.clear();
               });
-              _onNameChanged(value);
             },
-            _nameFocus,
-            () => FocusScope.of(context).requestFocus(_detailFocus),
-            _nameController,
-          ),
-          if (!isSearching && suggestions.isNotEmpty)
-            Column(
-              children: suggestions.map((customer) {
-                return ListTile(
-                  title: Text(customer["name"]!),
-                  subtitle: Text(customer["phoneNumber"]!),
-                  onTap: () {
-                    setState(() {
-                      name = customer["name"]!;
-                      selectedCustomerId = customer["id"]!;
-                      _nameController.text = name;
-                      suggestions.clear();
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          const SizedBox(height: 16),
-          detailsField(
-            AppStrings.workDetails,
-            (detail) => setState(() => details = detail),
-            _detailFocus,
-            () => FocusScope.of(context).requestFocus(_priceFocus),
-          ),
-          const SizedBox(height: 16),
-          priceField(
-            AppStrings.priceGs,
-            (p) => setState(() => price = p),
-            _priceFocus,
-            () {},
-          ),
-          const SizedBox(height: 16),
+          );
+        }).toList(),
+      ),
+      if (!isDesktop) const SizedBox(height: 18),
+
+      detailsField(
+        AppStrings.workDetails,
+        (detail) => setState(() => details = detail),
+        _detailFocus,
+        () => FocusScope.of(context).requestFocus(_priceFocus),
+      ),
+      if (!isDesktop) const SizedBox(height: 18),
+      priceField(
+        AppStrings.priceGs,
+        (p) => setState(() => price = p),
+        _priceFocus,
+        () {},
+      ),
+
+      Column(
+        children: [
           Row(
             children: [
-              Expanded(child: Text(AppStrings.completed)),
               Checkbox(
                 value: isCompleted,
                 onChanged: (bool? value) =>
-                    setState(() => isCompleted = value!),
+                    setState(() => isCompleted = value ?? false),
               ),
+              Text(AppStrings.completed),
             ],
           ),
           Row(
             children: [
-              Expanded(child: Text(AppStrings.paid)),
               Checkbox(
                 value: isPaid,
-                onChanged: (bool? value) => setState(() => isPaid = value!),
+                onChanged: (bool? value) =>
+                    setState(() => isPaid = value ?? false),
               ),
+              Text(AppStrings.paid),
             ],
-          ),
-          const SizedBox(height: 32),
-          Center(
-            child: SizedBox(
-              width: 200,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () => _saveReport(user),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  AppStrings.saveReport,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
           ),
         ],
       ),
-    );
+    ];
   }
 }

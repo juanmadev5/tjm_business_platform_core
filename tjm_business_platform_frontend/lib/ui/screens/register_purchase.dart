@@ -81,46 +81,53 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.registerPurchase)),
+      appBar: AppBar(title: Text(AppStrings.registerPurchase), elevation: 2),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth > 800;
 
           final content = SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (error)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      AppStrings.errorOnSavePurchase,
-                      style: TextStyle(color: AppColors.seedColor.error),
-                    ),
+                  _buildStatusMessage(
+                    text: AppStrings.errorOnSavePurchase,
+                    color: AppColors.seedColor.error,
+                    icon: Icons.warning_amber_rounded,
                   ),
                 if (saved)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      AppStrings.purchaseSaveSuccess,
-                      style: TextStyle(color: AppColors.seedColor.primary),
-                    ),
+                  _buildStatusMessage(
+                    text: AppStrings.purchaseSaveSuccess,
+                    color: AppColors.seedColor.primary,
+                    icon: Icons.check_circle_rounded,
                   ),
-                _buildTextField(_nameController, AppStrings.expenseName),
+                _buildInput(
+                  controller: _nameController,
+                  label: AppStrings.expenseName,
+                  icon: Icons.shopping_bag_outlined,
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(_detailController, AppStrings.expenseDetails),
+                _buildInput(
+                  controller: _detailController,
+                  label: AppStrings.expenseDetails,
+                  icon: Icons.description_outlined,
+                  maxLines: 3,
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(
-                  _quantityController,
-                  AppStrings.quantity,
+                _buildInput(
+                  controller: _quantityController,
+                  label: AppStrings.quantity,
+                  icon: Icons.confirmation_number_outlined,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(
-                  _priceController,
-                  AppStrings.unitaryPrice,
+                _buildInput(
+                  controller: _priceController,
+                  label: AppStrings.unitaryPrice,
+                  icon: Icons.attach_money_rounded,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -145,20 +152,24 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
                 ),
                 const SizedBox(height: 32),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: _saveExpense,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 32.0,
+                  child: SizedBox(
+                    width: 220,
+                    child: FilledButton.icon(
+                      onPressed: _saveExpense,
+                      icon: const Icon(Icons.save_rounded),
+                      label: Text(
+                        AppStrings.saveExpense,
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 24,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      AppStrings.saveExpense,
-                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
@@ -169,41 +180,76 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
           if (isDesktop) {
             return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
+                constraints: const BoxConstraints(maxWidth: 550),
                 child: Card(
-                  elevation: 6,
+                  elevation: 8,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   margin: const EdgeInsets.all(32),
                   child: Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(30),
                     child: content,
                   ),
                 ),
               ),
             );
-          } else {
-            return content;
           }
+
+          return content;
         },
       ),
     );
   }
 
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label, {
+  Widget _buildInput({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
+    int maxLines = 1,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      maxLines: maxLines,
       decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: AppColors.seedColor.primary),
         labelText: label,
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: AppColors.seedColor.primary, width: 2),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusMessage({
+    required String text,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: color, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -16,6 +16,7 @@ class EditCustomer extends StatefulWidget {
 class _EditCustomerState extends State<EditCustomer> {
   late TextEditingController _nameController;
   late TextEditingController _phoneController;
+  late TextEditingController _emailController;
 
   final Data data = Data();
   bool error = false;
@@ -26,6 +27,7 @@ class _EditCustomerState extends State<EditCustomer> {
     super.initState();
     _nameController = TextEditingController(text: widget.customer.name);
     _phoneController = TextEditingController(text: widget.customer.phoneNumber);
+    _emailController = TextEditingController(text: widget.customer.email);
   }
 
   @override
@@ -61,6 +63,7 @@ class _EditCustomerState extends State<EditCustomer> {
       id: widget.customer.id,
       name: _nameController.text,
       phoneNumber: _phoneController.text,
+      email: _emailController.text,
       works: widget.customer.works,
     );
 
@@ -74,7 +77,7 @@ class _EditCustomerState extends State<EditCustomer> {
         saved = true;
       });
 
-      Navigator.pop(context, true); // Indicar que se editó
+      Navigator.pop(context, true);
     } else {
       setState(() => error = true);
     }
@@ -147,36 +150,44 @@ class _EditCustomerState extends State<EditCustomer> {
           decoration: InputDecoration(labelText: AppStrings.phoneNumber),
           keyboardType: TextInputType.phone,
         ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _emailController,
+          decoration: InputDecoration(labelText: AppStrings.email),
+          keyboardType: TextInputType.emailAddress,
+        ),
         const SizedBox(height: 32),
-        Center(
-          child: Row(
-            children: [
-              ElevatedButton(
-                onPressed: _saveCustomer,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  AppStrings.saveCustomer,
-                  style: TextStyle(fontSize: 16),
+        Row(
+          mainAxisAlignment: .center,
+          children: [
+            ElevatedButton(
+              onPressed: _saveCustomer,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.seedColor.onSecondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              ElevatedButton(
-                onPressed: _deleteCustomer,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  AppStrings.deleteCustomer,
-                  style: TextStyle(fontSize: 16),
+              child: Text(
+                AppStrings.saveCustomer,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: _deleteCustomer,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.seedColor.onSecondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ],
-          ),
+              child: Text(
+                AppStrings.deleteCustomer,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
         ),
       ],
     );
