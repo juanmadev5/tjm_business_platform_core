@@ -36,4 +36,6 @@ class Expense {
       price: priceValue,
     );
   }
+  String get details => detail;
+  DateTime get createdAt => DateTime.now(); // Placeholder as it's not in DB yet
 }

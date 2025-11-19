@@ -50,4 +50,16 @@ class Data {
   Future<double> getTotalExpenses() async => appDatabase.getTotalExpenses();
 
   Future<double> getNetProfit() async => appDatabase.getNetProfit();
+
+  Future<int> getPendingReportsCount() async =>
+      appDatabase.getPendingReportsCount();
+
+  Future<int> getUnpaidReportsCount() async =>
+      appDatabase.getUnpaidReportsCount();
+
+  Future<List<Report>> getRecentReports({int limit = 5}) async =>
+      appDatabase.getRecentReports(limit: limit);
+
+  Future<List<Expense>> getRecentExpenses({int limit = 5}) async =>
+      appDatabase.getRecentExpenses(limit: limit);
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/state/report_controller.dart';
+import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/ui/components/details_field.dart';
 import 'package:tjm_business_platform/ui/components/name_field.dart';
 import 'package:tjm_business_platform/ui/components/price_field.dart';
@@ -36,7 +38,8 @@ class _EditReportState extends State<EditReport> {
   final FocusNode _detailFocus = FocusNode();
   final FocusNode _priceFocus = FocusNode();
 
-  Data data = Data();
+  final ReportController _controller = ReportController();
+  final Data data = Data(); // Still needed for customer search
   bool error = false;
   bool saved = false;
 
@@ -95,7 +98,7 @@ class _EditReportState extends State<EditReport> {
   }
 
   void _deleteReport(Report report) async {
-    final result = await data.deleteReport(report.id);
+    final result = await _controller.deleteReport(report.id);
 
     if (!mounted) return;
 
@@ -126,7 +129,7 @@ class _EditReportState extends State<EditReport> {
     if (_nameController.text.isNotEmpty &&
         _detailsController.text.isNotEmpty &&
         _priceController.text.isNotEmpty) {
-      final result = await data.appDatabase.editReport(rep);
+      final result = await _controller.editReport(rep);
 
       if (!mounted) return;
 
@@ -149,18 +152,22 @@ class _EditReportState extends State<EditReport> {
     var user = widget.user;
 
     bool isDesktop = MediaQuery.of(context).size.width > 800;
-    var insets = EdgeInsets.all(16.0);
+    var insets = const EdgeInsets.all(16.0);
     if (isDesktop) {
-      insets = EdgeInsets.only(left: 164, right: 164);
-    } else {
-      EdgeInsets.all(16.0);
+      insets = const EdgeInsets.only(left: 164, right: 164);
     }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text(AppStrings.createReport)),
+      appBar: AppBar(title: Text(AppStrings.editReport)),
       body: SingleChildScrollView(
-        child: Padding(padding: insets, child: view(context, user)),
+        child: Padding(
+          padding: insets,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: view(context, user),
+          ),
+        ),
       ),
     );
   }
@@ -202,7 +209,7 @@ class _EditReportState extends State<EditReport> {
               );
             }).toList(),
           ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         detailsField(
           AppStrings.workDetails,
           (detail) => setState(() {
@@ -212,7 +219,7 @@ class _EditReportState extends State<EditReport> {
           () => FocusScope.of(context).requestFocus(_priceFocus),
           controller: _detailsController,
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         priceField(
           AppStrings.priceGs,
           (p) => setState(() {
@@ -248,27 +255,25 @@ class _EditReportState extends State<EditReport> {
             ),
           ],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Center(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  _saveReport(user);
-                },
-                child: Text(AppStrings.saveReport),
+              AppButton(
+                text: AppStrings.saveReport,
+                onPressed: () => _saveReport(user),
               ),
-              SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: () {
-                  _deleteReport(widget.reportToEdit);
-                },
-                child: Text(AppStrings.deleteReport),
+              const SizedBox(width: 16),
+              AppButton(
+                text: AppStrings.deleteReport,
+                onPressed: () => _deleteReport(widget.reportToEdit),
+                backgroundColor: AppColors.seedColor.onSecondary,
               ),
             ],
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }

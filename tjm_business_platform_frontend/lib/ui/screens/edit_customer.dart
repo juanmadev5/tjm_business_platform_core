@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
-import 'package:tjm_business_platform_logic/domain/data.dart';
+import 'package:tjm_business_platform/state/customer_controller.dart';
+import 'package:tjm_business_platform/ui/components/app_button.dart';
+import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
 import 'package:tjm_business_platform_logic/core/model/customer.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 
@@ -18,7 +20,7 @@ class _EditCustomerState extends State<EditCustomer> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
 
-  final Data data = Data();
+  final CustomerController _controller = CustomerController();
   bool error = false;
   bool saved = false;
 
@@ -38,7 +40,7 @@ class _EditCustomerState extends State<EditCustomer> {
   }
 
   void _deleteCustomer() async {
-    final result = await data.deleteCustomer(widget.customer.id);
+    final result = await _controller.deleteCustomer(widget.customer.id);
 
     if (!mounted) return;
 
@@ -67,7 +69,7 @@ class _EditCustomerState extends State<EditCustomer> {
       works: widget.customer.works,
     );
 
-    final result = await data.appDatabase.editCustomer(updatedCustomer);
+    final result = await _controller.editCustomer(updatedCustomer);
 
     if (!mounted) return;
 
@@ -87,35 +89,27 @@ class _EditCustomerState extends State<EditCustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.editCustomer)),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 800;
-          final content = _formContent();
-
-          if (isDesktop) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  margin: const EdgeInsets.all(32),
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: content,
-                  ),
-                ),
+      body: ResponsiveLayout(
+        mobileBody: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: _formContent(),
+        ),
+        desktopBody: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            );
-          } else {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: content,
-            );
-          }
-        },
+              margin: const EdgeInsets.all(32),
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: _formContent(),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -158,34 +152,14 @@ class _EditCustomerState extends State<EditCustomer> {
         ),
         const SizedBox(height: 32),
         Row(
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: _saveCustomer,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.seedColor.onSecondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppStrings.saveCustomer,
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
+            AppButton(text: AppStrings.saveCustomer, onPressed: _saveCustomer),
             const SizedBox(width: 16),
-            ElevatedButton(
+            AppButton(
+              text: AppStrings.deleteCustomer,
               onPressed: _deleteCustomer,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.seedColor.onSecondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppStrings.deleteCustomer,
-                style: TextStyle(fontSize: 16),
-              ),
+              backgroundColor: AppColors.seedColor.onSecondary,
             ),
           ],
         ),

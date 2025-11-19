@@ -1,50 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/state/dashboard_controller.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/utils/currency_format.dart';
 
 class DashboardScreen extends StatefulWidget {
-  final DashboardDataModel? data;
-  const DashboardScreen({super.key, required this.data});
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final DashboardController _controller = DashboardController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.loadDashboardData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final data = widget.data;
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.generalResume)),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 800;
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final data = _controller.dashboardData;
+          final colorScheme = Theme.of(context).colorScheme;
 
-          if (data == null) {
-            return Center(child: Text("loading"));
-          }
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth > 800;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                if (isDesktop)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 128, right: 128),
-                    child: Center(child: wrap(data, colorScheme, isDesktop)),
-                  )
-                else
-                  wrap(data, colorScheme, isDesktop),
-              ],
-            ),
+              if (_controller.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (_controller.errorMessage != null) {
+                return Center(child: Text(_controller.errorMessage!));
+              }
+
+              if (data == null) {
+                return const Center(child: Text("No data available"));
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    if (isDesktop)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 128, right: 128),
+                        child: Column(
+                          children: [
+                            Center(child: wrap(data, colorScheme, isDesktop)),
+                            const SizedBox(height: 32),
+                            _buildRecentActivity(data, colorScheme, isDesktop),
+                          ],
+                        ),
+                      )
+                    else ...[
+                      wrap(data, colorScheme, isDesktop),
+                      const SizedBox(height: 32),
+                      _buildRecentActivity(data, colorScheme, isDesktop),
+                    ],
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildRecentActivity(
+    DashboardDataModel data,
+    ColorScheme colorScheme,
+    bool isDesktop,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.recentActivity,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 16),
+        if (data.recentReports.isEmpty)
+          const Center(child: Text(AppStrings.noRecentReports))
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: data.recentReports.length,
+            itemBuilder: (context, index) {
+              final report = data.recentReports[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: report.isPaid
+                        ? Colors.green
+                        : Colors.orange,
+                    child: Icon(
+                      report.isPaid ? Icons.check : Icons.pending,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(report.customerName),
+                  subtitle: Text(
+                    report.workDetails,
+                    style: TextStyle(overflow: .ellipsis),
+                  ),
+                  trailing: Text(formatDoubleToGs(report.price)),
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 
@@ -89,6 +167,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           textColor: colorScheme.onPrimaryContainer,
           isDesktop: isDesktop,
         ),
+        _buildCard(
+          title: AppStrings.pending,
+          value: data.pendingReportsCount.toString(),
+          icon: Icons.pending_actions,
+          color: Colors.orange,
+          isDesktop: isDesktop,
+        ),
+        _buildCard(
+          title: AppStrings.notPaidCount,
+          value: data.unpaidReportsCount.toString(),
+          icon: Icons.money_off,
+          color: Colors.redAccent,
+          isDesktop: isDesktop,
+        ),
       ],
     );
   }
@@ -104,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Container(
-      width: isDesktop ? 260 : double.infinity,
+      width: isDesktop ? 300 : double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cs.surface,

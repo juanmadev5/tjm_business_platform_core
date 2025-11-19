@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
+import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/screens/main_screen.dart';
@@ -130,19 +131,9 @@ class LoginScreenState extends State<LoginScreen> {
                 // Button
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: AppButton(
                     onPressed: _loginAction,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 18.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      elevation: 3,
-                    ),
-                    child: Text(
-                      AppStrings.actionLogin,
-                      style: const TextStyle(fontSize: 17),
-                    ),
+                    text: AppStrings.actionLogin,
                   ),
                 ),
               ],

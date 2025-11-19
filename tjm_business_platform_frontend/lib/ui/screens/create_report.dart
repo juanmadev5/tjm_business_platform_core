@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/state/report_controller.dart';
+import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/ui/components/details_field.dart';
 import 'package:tjm_business_platform/ui/components/name_field.dart';
 import 'package:tjm_business_platform/ui/components/price_field.dart';
+import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
 import 'package:tjm_business_platform/ui/utils/currency_format.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:tjm_business_platform_logic/core/model/platform_user.dart';
-import 'package:tjm_business_platform_logic/core/model/report.dart';
 import 'package:tjm_business_platform_logic/domain/data.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateReport extends StatefulWidget {
   final PlatformUser? user;
@@ -35,6 +36,7 @@ class _CreateReportState extends State<CreateReport> {
   final FocusNode _priceFocus = FocusNode();
   final TextEditingController _nameController = TextEditingController();
 
+  final ReportController _controller = ReportController();
   final Data data = Data();
   bool error = false;
   bool saved = false;
@@ -67,31 +69,30 @@ class _CreateReportState extends State<CreateReport> {
   }
 
   void _saveReport(PlatformUser user) async {
+    if (name.isEmpty || details.isEmpty || price.isEmpty) {
+      setState(() => error = true);
+      return;
+    }
+
     var formattedPrice = parseGsToDouble(price);
-    var rep = Report(
-      id: Uuid().v4(),
-      author: "${user.name} ${user.lastName}",
-      customerId: selectedCustomerId ?? Uuid().v4(),
+
+    final result = await _controller.createReport(
       customerName: name,
-      detail: details,
+      details: details,
       price: double.parse(formattedPrice.toString()),
-      isPending: !isCompleted,
+      isCompleted: isCompleted,
       isPaid: isPaid,
+      author: "${user.name} ${user.lastName}",
+      existingCustomerId: selectedCustomerId,
     );
 
-    if (name.isNotEmpty && details.isNotEmpty && price.isNotEmpty) {
-      final result = await data.appDatabase.addNewReport(rep);
+    if (!mounted) return;
 
-      if (!mounted) return;
-
-      if (result == ActionResult.ok) {
-        setState(() {
-          error = false;
-          saved = true;
-        });
-      } else {
-        setState(() => error = true);
-      }
+    if (result == ActionResult.ok) {
+      setState(() {
+        error = false;
+        saved = true;
+      });
     } else {
       setState(() => error = true);
     }
@@ -104,35 +105,27 @@ class _CreateReportState extends State<CreateReport> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text(AppStrings.createReport)),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 900;
-          final content = _formContent(user, isDesktop);
-
-          if (isDesktop) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1100),
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  margin: const EdgeInsets.all(32),
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: content,
-                  ),
-                ),
+      body: ResponsiveLayout(
+        mobileBody: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: _formContent(user, false),
+        ),
+        desktopBody: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1100),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            );
-          } else {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: content,
-            );
-          }
-        },
+              margin: const EdgeInsets.all(32),
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: _formContent(user, true),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -158,75 +151,63 @@ class _CreateReportState extends State<CreateReport> {
             ),
           ),
 
-        LayoutBuilder(
-          builder: (context, constraints) {
-            if (!isDesktop) {
-              return Column(children: _formFields(user));
-            }
+        if (!isDesktop) ..._formFields(user),
 
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _formFields(user)[0],
-                      if (!isSearching && suggestions.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        _formFields(user)[1],
-                      ],
-                      const SizedBox(height: 16),
-                      _formFields(user)[2],
+        if (isDesktop)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _formFields(user)[0],
+                    if (!isSearching && suggestions.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _formFields(user)[1],
                     ],
-                  ),
+                    const SizedBox(height: 16),
+                    _formFields(user)[2],
+                  ],
                 ),
-
-                const SizedBox(width: 32),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _formFields(user)[3],
-                      const SizedBox(height: 16),
-                      _formFields(user)[4],
-                      const SizedBox(height: 24),
-                      Align(
-                        alignment: Alignment.center,
-                        child: _saveButton(user),
+              ),
+              const SizedBox(width: 32),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _formFields(user)[3],
+                    const SizedBox(height: 16),
+                    _formFields(user)[4],
+                    const SizedBox(height: 24),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: 200,
+                        child: AppButton(
+                          text: AppStrings.saveReport,
+                          onPressed: () => _saveReport(user),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          ),
 
         const SizedBox(height: 32),
-        if (!isDesktop) Center(child: _saveButton(user)),
-      ],
-    );
-  }
-
-  Widget _saveButton(PlatformUser user) {
-    return SizedBox(
-      width: 200,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: () => _saveReport(user),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.seedColor.onSecondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        if (!isDesktop)
+          Center(
+            child: SizedBox(
+              width: 200,
+              child: AppButton(
+                text: AppStrings.saveReport,
+                onPressed: () => _saveReport(user),
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          AppStrings.saveReport,
-          style: const TextStyle(fontSize: 16),
-        ),
-      ),
+      ],
     );
   }
 

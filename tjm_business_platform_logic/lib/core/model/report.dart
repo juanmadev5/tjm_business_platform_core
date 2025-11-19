@@ -69,4 +69,7 @@ class Report {
       isPaid: isPaid ?? this.isPaid,
     );
   }
+
+  String get workDetails => detail;
+  DateTime get createdAt => DateTime.now(); // Placeholder
 }

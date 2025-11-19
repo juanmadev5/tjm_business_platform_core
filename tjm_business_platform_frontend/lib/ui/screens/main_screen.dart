@@ -1,7 +1,5 @@
-// Reworked MainScreen with improved desktop & mobile UI while keeping all functionality
-// NOTE: Navigation logic, data loading, roles filtering and model usage remain untouched.
-
 import 'package:flutter/material.dart';
+import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_item.dart';
@@ -35,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   bool isLoading = true;
   String? errorMessage;
   DashboardDataModel? dashboardData;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -49,6 +48,10 @@ class _MainScreenState extends State<MainScreen> {
     final netProfit = await data.getNetProfit();
     final totalReports = await data.getAllReports();
     final totalCustomers = await data.getAllCustomers();
+    final pendingCount = await data.getPendingReportsCount();
+    final unpaidCount = await data.getUnpaidReportsCount();
+    final recentReports = await data.getRecentReports(limit: 5);
+    final recentExpenses = await data.getRecentExpenses(limit: 5);
 
     setState(() {
       dashboardData = DashboardDataModel(
@@ -57,6 +60,10 @@ class _MainScreenState extends State<MainScreen> {
         netProfit: netProfit,
         totalReports: totalReports.length,
         totalCustomers: totalCustomers.length,
+        pendingReportsCount: pendingCount,
+        unpaidReportsCount: unpaidCount,
+        recentReports: recentReports,
+        recentExpenses: recentExpenses,
       );
     });
   }
@@ -206,91 +213,151 @@ class _MainScreenState extends State<MainScreen> {
     BuildContext context,
     List<NavigationItem> filteredItems,
   ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 220, vertical: 48),
-      child: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              itemCount: filteredItems.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                childAspectRatio: 1,
+    return Row(
+      children: [
+        NavigationRail(
+          extended: true,
+          minExtendedWidth: 260,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          selectedIndex: _selectedIndex,
+          labelType: NavigationRailLabelType.none,
+          onDestinationSelected: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            _navigateTo(filteredItems[index]);
+          },
+          destinations: filteredItems
+              .map(
+                (item) => NavigationRailDestination(
+                  icon: Icon(item.icon),
+                  label: Text(item.name),
+                ),
+              )
+              .toList(),
+          trailing: Expanded(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      auth.logout();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.seedColor.onSecondary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.logout_rounded,
+                            size: 20,
+                            color: AppColors.seedColor.onSurface,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppStrings.logout,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.seedColor.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              itemBuilder: (context, index) =>
-                  _desktopTile(context, filteredItems[index]),
             ),
           ),
-        ],
-      ),
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(child: _buildBody(filteredItems)),
+      ],
     );
   }
 
-  Widget _desktopTile(BuildContext context, NavigationItem item) {
-    return InkWell(
-      onTap: () => _navigateTo(item),
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                item.icon,
-                size: 36,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                item.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  Widget _buildBody(List<NavigationItem> filteredItems) {
+    if (_selectedIndex >= filteredItems.length) {
+      return const Center(child: Text('Seleccione una opción'));
+    }
+
+    final selectedItem = filteredItems[_selectedIndex];
+
+    switch (selectedItem.name) {
+      case AppStrings.dashboard:
+        return const DashboardScreen();
+      case AppStrings.createReport:
+        return CreateReport(user: user);
+      case AppStrings.reports:
+        return AllReports(user: user!);
+      case AppStrings.registerCustomer:
+        return CreateCustomer();
+      case AppStrings.customers:
+        return AllCustomers();
+      case AppStrings.registerPurchase:
+        return RegisterPurchase();
+      case AppStrings.purchases:
+        return AllExpenses();
+      default:
+        return Center(child: Text('Pantalla: ${selectedItem.name}'));
+    }
   }
 
   void _navigateTo(NavigationItem item) {
-    if (item.name == AppStrings.dashboard) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => DashboardScreen(data: dashboardData)),
-      );
-    } else if (item.name == AppStrings.createReport) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => CreateReport(user: user)),
-      );
-    } else if (item.name == AppStrings.reports) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => AllReports(user: user!)),
-      );
-    } else if (item.name == AppStrings.registerCustomer) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => CreateCustomer()),
-      );
-    } else if (item.name == AppStrings.customers) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => AllCustomers()),
-      );
-    } else if (item.name == AppStrings.registerPurchase) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => RegisterPurchase()),
-      );
-    } else if (item.name == AppStrings.purchases) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => AllExpenses()));
+    final isDesktop = MediaQuery.of(context).size.width > 850;
+
+    if (!isDesktop) {
+      if (item.name == AppStrings.dashboard) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        );
+      } else if (item.name == AppStrings.createReport) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => CreateReport(user: user)),
+        );
+      } else if (item.name == AppStrings.reports) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => AllReports(user: user!)),
+        );
+      } else if (item.name == AppStrings.registerCustomer) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => CreateCustomer()),
+        );
+      } else if (item.name == AppStrings.customers) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => AllCustomers()),
+        );
+      } else if (item.name == AppStrings.registerPurchase) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => RegisterPurchase()),
+        );
+      } else if (item.name == AppStrings.purchases) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => AllExpenses()),
+        );
+      }
     }
   }
 }

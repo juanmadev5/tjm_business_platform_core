@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
-import 'package:tjm_business_platform_logic/domain/data.dart';
+import 'package:tjm_business_platform/state/customer_controller.dart';
+import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform_logic/core/model/customer.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:uuid/uuid.dart';
@@ -17,7 +18,7 @@ class _CreateCustomerState extends State<CreateCustomer> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final Data data = Data();
+  final CustomerController _controller = CustomerController();
 
   bool error = false;
   bool saved = false;
@@ -36,7 +37,7 @@ class _CreateCustomerState extends State<CreateCustomer> {
       works: [],
     );
 
-    final result = await data.appDatabase.addNewCustomer(newCustomer);
+    final result = await _controller.addCustomer(newCustomer);
 
     if (!mounted) return;
 
@@ -143,19 +144,10 @@ class _CreateCustomerState extends State<CreateCustomer> {
           child: SizedBox(
             width: 200,
             height: 48,
-            child: ElevatedButton.icon(
+            child: AppButton(
               onPressed: _saveCustomer,
-              icon: const Icon(Icons.save),
-              label: Text(
-                AppStrings.saveCustomer,
-                style: TextStyle(fontSize: 16),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.seedColor.onSecondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              icon: Icons.save,
+              text: AppStrings.saveCustomer,
             ),
           ),
         ),

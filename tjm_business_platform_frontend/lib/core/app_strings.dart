@@ -1,58 +1,78 @@
 class AppStrings {
-  static final String admin = "Administrador";
-  static final String user = "Técnico";
-  static final String accountant = "Contador";
+  static const String appName = "TJM Business Platform";
 
-  static final String dashboard = "Dashboard";
-  static final String createReport = "Crear reporte";
-  static final String reports = "Ver reportes";
-  static final String registerCustomer = "Registrar cliente";
-  static final String customers = "Ver clientes";
-  static final String registerPurchase = "Registrar compra";
-  static final String purchases = "Ver compras";
+  static const String admin = "Administrador";
+  static const String user = "Técnico";
+  static const String accountant = "Contador";
 
-  static final String login = "Inicie sesión en la plataforma";
-  static final String userNotFound =
+  static const String dashboard = "Dashboard";
+  static const String createReport = "Crear reporte";
+  static const String editReport = "Editar reporte";
+  static const String reports = "Ver reportes";
+  static const String registerCustomer = "Registrar cliente";
+  static const String customers = "Ver clientes";
+  static const String registerPurchase = "Registrar compra";
+  static const String purchases = "Ver compras";
+
+  static const String login = "Inicie sesión en la plataforma";
+  static const String userNotFound =
       "No se encontraron datos de usuario. Contacte con su administrador de TI";
-  static final String loading = "Cargando...";
-  static final String email = "Correo electrónico";
-  static final String password = "Contraseña";
-  static final String actionLogin = "Iniciar sesión";
-  static final String userOrPasswordInvalid =
+  static const String loading = "Cargando...";
+  static const String email = "Correo electrónico";
+  static const String password = "Contraseña";
+  static const String actionLogin = "Iniciar sesión";
+  static const String userOrPasswordInvalid =
       "Usuario o contraseña incorrectos";
 
-  static final String errorOnSaveReport = "Error al guardar reporte";
-  static final String reportSaveSuccess = "Reporte guardado con éxito";
-  static final String customerName = "Nombre de cliente o empresa";
-  static final String workDetails = "Detalles del trabajo";
-  static final String priceGs = "Precio (Gs.)";
-  static final String completed = "Completado";
-  static final String paid = "Pagado";
-  static final String saveReport = "Guardar reporte";
+  static const String errorOnSaveReport = "Error al guardar reporte";
+  static const String reportSaveSuccess = "Reporte guardado con éxito";
+  static const String customerName = "Nombre de cliente o empresa";
+  static const String workDetails = "Detalles del trabajo";
+  static const String priceGs = "Precio (Gs.)";
+  static const String completed = "Completado";
+  static const String paid = "Pagado";
+  static const String notPaid = "No Pagado";
+  static const String saveReport = "Guardar reporte";
 
-  static final String editCustomer = "Editar cliente";
-  static final String saveCustomer = "Guardar cliente";
-  static final String errorOnSaveCustomer = "Error al guardar reporte";
-  static final String customerSaveSuccess = "Reporte guardado con éxito";
+  static const String editCustomer = "Editar cliente";
+  static const String saveCustomer = "Guardar cliente";
+  static const String errorOnSaveCustomer = "Error al guardar reporte";
+  static const String customerSaveSuccess = "Reporte guardado con éxito";
 
-  static final String phoneNumber = "Número de teléfono";
+  static const String phoneNumber = "Número de teléfono";
 
-  static final String errorOnSavePurchase =
+  static const String errorOnSavePurchase =
       "Error al guardar. Verifica los campos.";
-  static final String purchaseSaveSuccess = "Compra registrada correctamente";
-  static final String expenseName = "Nombre del gasto";
-  static final String expenseDetails = "Detalles";
-  static final String quantity = "Cantidad";
-  static final String unitaryPrice = "Precio por unidad";
-  static final String saveExpense = "Guardar compra";
+  static const String purchaseSaveSuccess = "Compra registrada correctamente";
+  static const String expenseName = "Nombre del gasto";
+  static const String expenseDetails = "Detalles";
+  static const String quantity = "Cantidad";
+  static const String unitaryPrice = "Precio por unidad";
+  static const String saveExpense = "Guardar compra";
 
-  static final String generalResume = "Resumen general";
-  static final String totalIncomes = "Ingresos totales";
-  static final String totalExpenses = "Gastos totales";
-  static final netProfit = "Beneficio neto";
-  static final totalReports = "Reportes totales";
-  static final totalCustomers = "Clientes";
+  static const String generalResume = "Resumen general";
+  static const String totalIncomes = "Ingresos totales";
+  static const String totalExpenses = "Gastos totales";
+  static const netProfit = "Beneficio neto";
+  static const totalReports = "Reportes totales";
+  static const totalCustomers = "Clientes";
 
-  static final deleteReport = "Eliminar reporte";
-  static final deleteCustomer = "Eliminar cliente";
+  static const deleteReport = "Eliminar reporte";
+
+  static const deleteCustomer = "Eliminar cliente";
+
+  static const recentActivity = "Actividad Reciente";
+  static const recentReports = "Últimos Reportes";
+  static const noRecentReports = "No hay reportes recientes.";
+  static const recentExpenses = "Últimos Gastos";
+  static const noRecentExpenses = "No hay gastos recientes.";
+  static const noReports = "No hay reportes registrados.";
+  static const noCustomers = "No hay clientes registrados.";
+  static const noExpenses = "No hay gastos registrados.";
+  static const pending = "Pendientes";
+  static const pendingStatus = "Pendiente";
+  static const notPaidCount = "No Pagados";
+  static const expense = "Gasto";
+  static const logout = "Cerrar Sesión";
+  static const errorLoadingProfile = "Error al cargar el perfil: ";
 }

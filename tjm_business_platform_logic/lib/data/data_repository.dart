@@ -284,4 +284,63 @@ class DataRepository {
     final expenses = await getTotalExpenses();
     return income - expenses;
   }
+
+  Future<int> getPendingReportsCount() async {
+    try {
+      final response = await client!
+          .from('reports')
+          .select('id')
+          .eq('is_pending', true);
+      return (response as List).length;
+    } catch (e) {
+      print('Error getting pending reports count: $e');
+      return 0;
+    }
+  }
+
+  Future<int> getUnpaidReportsCount() async {
+    try {
+      final response = await client!
+          .from('reports')
+          .select('id')
+          .eq('is_paid', false);
+      return (response as List).length;
+    } catch (e) {
+      print('Error getting unpaid reports count: $e');
+      return 0;
+    }
+  }
+
+  Future<List<Report>> getRecentReports({int limit = 5}) async {
+    try {
+      final response = await client!
+          .from('reports')
+          .select('*, customers(name)')
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) {
+        final customerData = json['customers'] as Map<String, dynamic>?;
+        final customerName = customerData?['name'] as String? ?? 'N/A';
+        return Report.fromJson(json, customerName: customerName);
+      }).toList();
+    } catch (e) {
+      print('Error fetching recent reports: $e');
+      return [];
+    }
+  }
+
+  Future<List<Expense>> getRecentExpenses({int limit = 5}) async {
+    try {
+      final response = await client!
+          .from('expenses')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(limit);
+      return (response as List).map((json) => Expense.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching recent expenses: $e');
+      return [];
+    }
+  }
 }
