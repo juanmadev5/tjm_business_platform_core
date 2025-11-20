@@ -4,9 +4,6 @@
 -- drop table if exists users cascade;
 
 
--- ========================================
--- Tabla de usuarios
--- ========================================
 create table if not exists users (
     id uuid primary key,
     name text not null,
@@ -17,10 +14,6 @@ create table if not exists users (
     created_at timestamp with time zone default now()
 );
 
-
--- ========================================
--- Tabla de clientes
--- ========================================
 create table if not exists customers (
     id uuid primary key default gen_random_uuid(),
     name text not null,
@@ -29,9 +22,6 @@ create table if not exists customers (
     created_at timestamp with time zone default now()
 );
 
--- ========================================
--- Tabla de reportes
--- ========================================
 create table if not exists reports (
     id uuid primary key default gen_random_uuid(),
     author text not null,
@@ -43,12 +33,8 @@ create table if not exists reports (
     created_at timestamp with time zone default now()
 );
 
--- Índice para buscar reportes por cliente
 create index if not exists idx_reports_customer_id on reports(customer_id);
 
--- ========================================
--- Tabla de gastos
--- ========================================
 create table if not exists expenses (
     id uuid primary key default gen_random_uuid(),
     name text not null,
@@ -60,11 +46,10 @@ create table if not exists expenses (
 
 insert into users (id, name, last_name, email, phone_number, role)
 values (
-    '280ed459-f54e-4af3-b6d5-964ffb56f1fe',  -- el id que devuelve Supabase Auth
-    'Juan Manuel',             -- nombre
-    'Velázquez',               -- apellido
+    '280ed459-f54e-4af3-b6d5',  -- id that Supabase Auth returns
+    'Juan Manuel',             -- name
+    'Velázquez',               -- last name
     'itzjuanmadev@proton.me', -- email
-    '+595972399110',           -- teléfono
-    'admin'                    -- rol
+    '+595900000000',           -- phone number
+    'admin'                    -- role
 );
-
