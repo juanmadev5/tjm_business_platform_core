@@ -14,10 +14,10 @@ A comprehensive business management solution designed to streamline operations, 
 
 <table>
   <tr>
-    <td><img src="assets/screenshot1.jpg" width="200" alt="Dashboard Screenshot"></td>
-    <td><img src="assets/screenshot2.jpg" width="200" alt="Customer Management Screenshot"></td>
-    <td><img src="assets/screenshot3.jpg" width="200" alt="Expense Tracking Screenshot"></td>
-    <td><img src="assets/screenshot4.jpg" width="200" alt="Reporting Screenshot"></td>
+    <td><img src="assets/screenshot-1.png" width="200" alt="Dashboard Screenshot"></td>
+    <td><img src="assets/screenshot-2.png" width="200" alt="Customer Management Screenshot"></td>
+    <td><img src="assets/screenshot-3.png" width="200" alt="Expense Tracking Screenshot"></td>
+    <td><img src="assets/screenshot-4.png" width="200" alt="Reporting Screenshot"></td>
   </tr>
 </table>
 
