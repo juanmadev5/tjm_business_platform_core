@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/report_controller.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/ui/components/details_field.dart';
 import 'package:tjm_business_platform/ui/components/name_field.dart';
 import 'package:tjm_business_platform/ui/components/price_field.dart';
 import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
+import 'package:tjm_business_platform/ui/components/status_message.dart';
 import 'package:tjm_business_platform/ui/utils/currency_format.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:tjm_business_platform_logic/core/model/platform_user.dart';
@@ -104,7 +105,9 @@ class _CreateReportState extends State<CreateReport> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text(AppStrings.createReport)),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.createReport))
+          : null,
       body: ResponsiveLayout(
         mobileBody: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -131,25 +134,24 @@ class _CreateReportState extends State<CreateReport> {
   }
 
   Widget _formContent(PlatformUser user, bool isDesktop) {
+    var colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (error)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: Text(
-              AppStrings.errorOnSaveReport,
-              style: TextStyle(color: AppColors.seedColor.error),
-            ),
+          actionMessage(
+            text: AppStrings.errorOnSaveReport,
+            color: colors.error,
+            icon: Icons.warning_amber_rounded,
           ),
-        if (saved)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: Text(
-              AppStrings.reportSaveSuccess,
-              style: TextStyle(color: AppColors.seedColor.primary),
-            ),
+        if (saved) ...[
+          actionMessage(
+            text: AppStrings.reportSaveSuccess,
+            color: colors.primary,
+            icon: Icons.check_circle_rounded,
           ),
+          SizedBox(height: 12),
+        ],
 
         if (!isDesktop) ..._formFields(user),
 
@@ -196,7 +198,7 @@ class _CreateReportState extends State<CreateReport> {
             ],
           ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 12),
         if (!isDesktop)
           Center(
             child: SizedBox(
@@ -225,6 +227,7 @@ class _CreateReportState extends State<CreateReport> {
         _nameFocus,
         () => FocusScope.of(context).requestFocus(_detailFocus),
         _nameController,
+        context,
       ),
 
       Column(
@@ -250,6 +253,7 @@ class _CreateReportState extends State<CreateReport> {
         (detail) => setState(() => details = detail),
         _detailFocus,
         () => FocusScope.of(context).requestFocus(_priceFocus),
+        context: context,
       ),
       if (!isDesktop) const SizedBox(height: 18),
       priceField(
@@ -257,6 +261,7 @@ class _CreateReportState extends State<CreateReport> {
         (p) => setState(() => price = p),
         _priceFocus,
         () {},
+        context: context,
       ),
 
       Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/customer_controller.dart';
 import 'package:tjm_business_platform/ui/components/customer_card.dart';
 import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
@@ -43,7 +44,9 @@ class _AllCustomersState extends State<AllCustomers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.customers)),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.customers))
+          : null,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

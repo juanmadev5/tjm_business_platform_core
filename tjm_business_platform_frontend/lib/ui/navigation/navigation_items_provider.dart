@@ -8,37 +8,37 @@ class NavigationItemsProvider {
     return [
       NavigationItem(
         name: AppStrings.dashboard,
-        icon: Icons.dashboard,
+        icon: Icons.dashboard_rounded,
         roles: [Role.admin, Role.accountant],
       ),
       NavigationItem(
         name: AppStrings.createReport,
-        icon: Icons.post_add,
+        icon: Icons.post_add_rounded,
         roles: [Role.admin, Role.user],
       ),
       NavigationItem(
         name: AppStrings.reports,
-        icon: Icons.list_alt,
+        icon: Icons.list_alt_rounded,
         roles: [Role.admin, Role.user],
       ),
       NavigationItem(
         name: AppStrings.registerCustomer,
-        icon: Icons.group_add,
+        icon: Icons.group_add_rounded,
         roles: [Role.admin, Role.user],
       ),
       NavigationItem(
         name: AppStrings.customers,
-        icon: Icons.groups,
+        icon: Icons.groups_rounded,
         roles: [Role.admin, Role.user],
       ),
       NavigationItem(
         name: AppStrings.registerPurchase,
-        icon: Icons.request_quote,
+        icon: Icons.request_quote_rounded,
         roles: [Role.admin, Role.accountant],
       ),
       NavigationItem(
         name: AppStrings.purchases,
-        icon: Icons.shopping_basket,
+        icon: Icons.shopping_basket_rounded,
         roles: [Role.admin, Role.accountant],
       ),
     ];

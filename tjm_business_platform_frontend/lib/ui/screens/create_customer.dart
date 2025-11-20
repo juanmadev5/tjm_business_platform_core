@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/customer_controller.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
+import 'package:tjm_business_platform/ui/components/status_message.dart';
 import 'package:tjm_business_platform_logic/core/model/customer.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:uuid/uuid.dart';
@@ -65,13 +66,14 @@ class _CreateCustomerState extends State<CreateCustomer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.registerCustomer), elevation: 2),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.registerCustomer))
+          : null,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 800;
           final content = _formContent();
 
-          if (isDesktop) {
+          if (isDesktop(context)) {
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 600),
@@ -101,25 +103,24 @@ class _CreateCustomerState extends State<CreateCustomer> {
   }
 
   Widget _formContent() {
+    var colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (error)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              AppStrings.errorOnSaveCustomer,
-              style: TextStyle(color: AppColors.seedColor.error),
-            ),
+          actionMessage(
+            text: AppStrings.errorOnSaveCustomer,
+            color: colors.error,
+            icon: Icons.warning_amber_rounded,
           ),
-        if (saved)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              AppStrings.customerSaveSuccess,
-              style: TextStyle(color: AppColors.seedColor.primary),
-            ),
+        if (saved) ...[
+          actionMessage(
+            text: AppStrings.customerSaveSuccess,
+            color: colors.primary,
+            icon: Icons.check_circle_rounded,
           ),
+          SizedBox(height: 12),
+        ],
         _textField(
           controller: _nameController,
           label: AppStrings.customerName,
@@ -166,7 +167,7 @@ class _CreateCustomerState extends State<CreateCustomer> {
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppColors.seedColor.primary),
+        prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.primary),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/state/report_controller.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
@@ -173,18 +172,19 @@ class _EditReportState extends State<EditReport> {
   }
 
   Column view(BuildContext context, PlatformUser user) {
+    var colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (error)
           Text(
             AppStrings.errorOnSaveReport,
-            style: TextStyle(color: AppColors.seedColor.error),
+            style: TextStyle(color: colors.error),
           ),
         if (saved)
           Text(
             AppStrings.reportSaveSuccess,
-            style: TextStyle(color: AppColors.seedColor.primary),
+            style: TextStyle(color: colors.primary),
           ),
         nameField(
           AppStrings.customerName,
@@ -192,6 +192,7 @@ class _EditReportState extends State<EditReport> {
           _nameFocus,
           () => FocusScope.of(context).requestFocus(_detailFocus),
           _nameController,
+          context,
         ),
         if (!isSearching && suggestions.isNotEmpty)
           Column(
@@ -218,6 +219,7 @@ class _EditReportState extends State<EditReport> {
           _detailFocus,
           () => FocusScope.of(context).requestFocus(_priceFocus),
           controller: _detailsController,
+          context: context,
         ),
         const SizedBox(height: 16),
         priceField(
@@ -228,6 +230,7 @@ class _EditReportState extends State<EditReport> {
           _priceFocus,
           () {},
           controller: _priceController,
+          context: context,
         ),
         Row(
           children: [
@@ -268,7 +271,7 @@ class _EditReportState extends State<EditReport> {
               AppButton(
                 text: AppStrings.deleteReport,
                 onPressed: () => _deleteReport(widget.reportToEdit),
-                backgroundColor: AppColors.seedColor.onSecondary,
+                backgroundColor: colors.onSecondary,
               ),
             ],
           ),

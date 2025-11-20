@@ -37,7 +37,7 @@ class AppStrings {
   static const String editCustomer = "Editar cliente";
   static const String saveCustomer = "Guardar cliente";
   static const String errorOnSaveCustomer = "Error al guardar reporte";
-  static const String customerSaveSuccess = "Reporte guardado con éxito";
+  static const String customerSaveSuccess = "Cliente registrado con éxito";
 
   static const String phoneNumber = "Número de teléfono";
 

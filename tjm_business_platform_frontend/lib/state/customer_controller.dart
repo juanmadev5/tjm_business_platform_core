@@ -10,7 +10,7 @@ class CustomerController extends ChangeNotifier {
 
   final Data _data = Data();
 
-  List<Customer> _customers = [];
+  final List<Customer> _customers = [];
   List<Customer> get customers => _customers;
 
   bool _isLoading = false;
@@ -21,7 +21,6 @@ class CustomerController extends ChangeNotifier {
 
   int _page = 1;
 
-  // Caching mechanism: simple check if we have data
   bool get hasData => _customers.isNotEmpty;
 
   Future<void> fetchCustomers({bool reset = false}) async {
@@ -29,7 +28,7 @@ class CustomerController extends ChangeNotifier {
       _page = 1;
       _hasMore = true;
       _customers.clear();
-      notifyListeners(); // Notify to show loading/empty state if needed
+      notifyListeners();
     }
 
     if (_isLoading || !_hasMore) return;
@@ -46,9 +45,6 @@ class CustomerController extends ChangeNotifier {
 
       _customers.addAll(newCustomers);
       _page++;
-    } catch (e) {
-      print("Error fetching customers: $e");
-      // Handle error state if needed
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -58,7 +54,6 @@ class CustomerController extends ChangeNotifier {
   Future<ActionResult> addCustomer(Customer customer) async {
     final result = await _data.addNewCustomer(customer);
     if (result == ActionResult.ok) {
-      // Refresh list or add locally
       await fetchCustomers(reset: true);
     }
     return result;

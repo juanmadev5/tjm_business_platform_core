@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform_logic/core/model/customer.dart';
 
 class CustomerCard extends StatelessWidget {
@@ -63,7 +62,7 @@ class CustomerCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.seedColor.onSecondary,
+                  color: Theme.of(context).colorScheme.onSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.chevron_right, color: Colors.white),

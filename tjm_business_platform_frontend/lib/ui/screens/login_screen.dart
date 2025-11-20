@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
@@ -48,7 +47,6 @@ class LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.seedColor.surface,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth > 800;
@@ -85,7 +83,6 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 const SizedBox(height: 28.0),
 
-                // Email
                 TextField(
                   keyboardType: TextInputType.emailAddress,
                   focusNode: _emailFocus,
@@ -103,7 +100,6 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 18.0),
 
-                // Password
                 TextField(
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: !showPassword,
@@ -128,9 +124,9 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32.0),
 
-                // Button
                 SizedBox(
                   width: double.infinity,
+                  height: 48,
                   child: AppButton(
                     onPressed: _loginAction,
                     text: AppStrings.actionLogin,

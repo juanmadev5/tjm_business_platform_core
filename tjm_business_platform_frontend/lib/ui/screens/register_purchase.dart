@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_settings.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/expense_controller.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
 import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
+import 'package:tjm_business_platform/ui/components/status_message.dart';
 import 'package:tjm_business_platform_logic/core/model/expense.dart';
 import 'package:tjm_business_platform_logic/core/action_result.dart';
 import 'package:uuid/uuid.dart';
@@ -83,7 +84,9 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.registerPurchase), elevation: 2),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.registerPurchase))
+          : null,
       body: ResponsiveLayout(
         mobileBody: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -110,21 +113,24 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
   }
 
   Widget _formContent() {
+    var colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (error)
-          _buildStatusMessage(
+          actionMessage(
             text: AppStrings.errorOnSavePurchase,
-            color: AppColors.seedColor.error,
+            color: colors.error,
             icon: Icons.warning_amber_rounded,
           ),
-        if (saved)
-          _buildStatusMessage(
+        if (saved) ...[
+          actionMessage(
             text: AppStrings.purchaseSaveSuccess,
-            color: AppColors.seedColor.primary,
+            color: colors.primary,
             icon: Icons.check_circle_rounded,
           ),
+          SizedBox(height: 12),
+        ],
         _buildInput(
           controller: _nameController,
           label: AppStrings.expenseName,
@@ -192,46 +198,20 @@ class _RegisterPurchaseState extends State<RegisterPurchase> {
     List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
+    var colors = Theme.of(context).colorScheme;
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       maxLines: maxLines,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: AppColors.seedColor.primary),
+        prefixIcon: Icon(icon, color: colors.primary),
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: AppColors.seedColor.primary, width: 2),
+          borderSide: BorderSide(color: colors.primary, width: 2),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatusMessage({
-    required String text,
-    required Color color,
-    required IconData icon,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(color: color, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
       ),
     );
   }

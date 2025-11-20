@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform_logic/core/model/expense.dart';
 
 class ExpenseCard extends StatelessWidget {
@@ -63,7 +62,7 @@ class ExpenseCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.seedColor.error,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ),
                 const SizedBox(height: 4),

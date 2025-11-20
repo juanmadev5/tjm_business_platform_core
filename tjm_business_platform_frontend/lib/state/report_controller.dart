@@ -11,7 +11,7 @@ class ReportController extends ChangeNotifier {
 
   final Data _data = Data();
 
-  List<Report> _reports = [];
+  final List<Report> _reports = [];
   List<Report> get reports => _reports;
 
   bool _isLoading = false;
@@ -46,8 +46,6 @@ class ReportController extends ChangeNotifier {
 
       _reports.addAll(newReports);
       _page++;
-    } catch (e) {
-      print("Error fetching reports: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

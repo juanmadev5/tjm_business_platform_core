@@ -27,9 +27,6 @@ class DashboardController extends ChangeNotifier {
       final totalIncome = await _data.getTotalIncome();
       final totalExpenses = await _data.getTotalExpenses();
       final netProfit = await _data.getNetProfit();
-      // Note: getAllReports and getAllCustomers might be heavy if there are many records.
-      // Ideally, the backend/repository should provide count methods.
-      // For now, we use what's available as per the original implementation.
       final totalReports = await _data.getAllReports();
       final totalCustomers = await _data.getAllCustomers();
       final pendingReports = await _data.getPendingReportsCount();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/report_controller.dart';
 import 'package:tjm_business_platform/ui/components/report_card.dart';
 import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
@@ -55,7 +56,9 @@ class _AllReportsState extends State<AllReports> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.reports)),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.reports))
+          : null,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

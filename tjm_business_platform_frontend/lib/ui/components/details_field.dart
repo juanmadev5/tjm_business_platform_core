@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 
 TextField detailsField(
   String label,
@@ -7,6 +6,7 @@ TextField detailsField(
   FocusNode focusNode,
   Function() onSubmitted, {
   TextEditingController? controller,
+  required BuildContext context
 }) {
   return TextField(
     controller: controller,
@@ -17,7 +17,7 @@ TextField detailsField(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: AppColors.seedColor.primary, width: 2),
+        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
       ),
     ),
     onChanged: (value) {

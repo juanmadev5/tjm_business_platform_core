@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/expense_controller.dart';
 import 'package:tjm_business_platform/ui/components/expense_card.dart';
 import 'package:tjm_business_platform/ui/components/responsive_layout.dart';
@@ -41,7 +42,9 @@ class _AllExpensesState extends State<AllExpenses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.purchases)),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.purchases))
+          : null,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

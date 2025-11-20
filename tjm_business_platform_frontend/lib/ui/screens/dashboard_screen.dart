@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
+import 'package:tjm_business_platform/core/is_desktop.dart';
 import 'package:tjm_business_platform/state/dashboard_controller.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/utils/currency_format.dart';
@@ -23,7 +24,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.generalResume)),
+      appBar: !isDesktop(context)
+          ? AppBar(title: Text(AppStrings.generalResume))
+          : null,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {

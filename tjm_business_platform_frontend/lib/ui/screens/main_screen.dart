@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_item.dart';
@@ -110,7 +109,6 @@ class _MainScreenState extends State<MainScreen> {
     final isDesktop = MediaQuery.of(context).size.width > 850;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 2,
         title: Row(
@@ -134,16 +132,17 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              auth.logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
-            },
-          ),
+          if (!isDesktop)
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                auth.logout();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+            ),
         ],
       ),
       body: isDesktop
@@ -173,9 +172,11 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
-          leading: Icon(
-            item.icon,
-            color: Theme.of(context).colorScheme.primary,
+          leading: CircleAvatar(
+            child: Icon(
+              item.icon,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           title: Text(item.name),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -189,7 +190,9 @@ class _MainScreenState extends State<MainScreen> {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.5),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -213,6 +216,7 @@ class _MainScreenState extends State<MainScreen> {
     BuildContext context,
     List<NavigationItem> filteredItems,
   ) {
+    var colors = Theme.of(context).colorScheme;
     return Row(
       children: [
         NavigationRail(
@@ -257,7 +261,7 @@ class _MainScreenState extends State<MainScreen> {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.seedColor.onSecondary,
+                        color: colors.onSecondary,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -266,14 +270,14 @@ class _MainScreenState extends State<MainScreen> {
                           Icon(
                             Icons.logout_rounded,
                             size: 20,
-                            color: AppColors.seedColor.onSurface,
+                            color: colors.onSurface,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.logout,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: AppColors.seedColor.onSurface,
+                              color: colors.onSurface,
                             ),
                           ),
                         ],

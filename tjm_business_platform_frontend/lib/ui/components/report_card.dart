@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform_logic/core/model/report.dart';
 
@@ -21,84 +20,115 @@ class ReportCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: report.isPaid
-                    ? Colors.green.withValues(alpha: 0.2)
-                    : Colors.orange.withValues(alpha: 0.2),
-                child: Icon(
-                  report.isPaid ? Icons.check_circle : Icons.pending,
-                  color: report.isPaid ? Colors.green : Colors.orange,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      report.customerName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+      child: SizedBox(
+        height: 120,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 180,
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: .start,
+                                  children: [
+                                    Text(
+                                      report.customerName,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    SizedBox(
+                                      width: 150,
+                                      child: Text(
+                                        report.workDetails,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: .ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: .end,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      currencyFormat.format(report.price),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      DateFormat(
+                                        'dd/MM/yyyy',
+                                      ).format(report.createdAt),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      report.workDetails,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _StatusChip(
-                          label: report.isPending
-                              ? AppStrings.pendingStatus
-                              : AppStrings.completed,
-                          color: report.isPending ? Colors.orange : Colors.blue,
+
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            _StatusChip(
+                              label: report.isPending
+                                  ? AppStrings.pendingStatus
+                                  : AppStrings.completed,
+                              color: report.isPending
+                                  ? Colors.orange
+                                  : Colors.blue,
+                            ),
+                            const SizedBox(width: 8),
+                            _StatusChip(
+                              label: report.isPaid
+                                  ? AppStrings.paid
+                                  : AppStrings.notPaid,
+                              color: report.isPaid ? Colors.green : Colors.red,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        _StatusChip(
-                          label: report.isPaid
-                              ? AppStrings.paid
-                              : AppStrings.notPaid,
-                          color: report.isPaid ? Colors.green : Colors.red,
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    currencyFormat.format(report.price),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.seedColor.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    DateFormat('dd/MM/yyyy').format(report.createdAt),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

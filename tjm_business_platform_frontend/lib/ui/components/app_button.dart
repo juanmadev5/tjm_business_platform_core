@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
@@ -19,8 +18,9 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colors = Theme.of(context).colorScheme;
     final style = ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor ?? AppColors.seedColor.onSecondary,
+      backgroundColor: backgroundColor ?? colors.onSecondary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     );

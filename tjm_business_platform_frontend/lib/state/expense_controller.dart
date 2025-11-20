@@ -10,7 +10,7 @@ class ExpenseController extends ChangeNotifier {
 
   final Data _data = Data();
 
-  List<Expense> _expenses = [];
+  final List<Expense> _expenses = [];
   List<Expense> get expenses => _expenses;
 
   bool _isLoading = false;
@@ -45,8 +45,6 @@ class ExpenseController extends ChangeNotifier {
 
       _expenses.addAll(newExpenses);
       _page++;
-    } catch (e) {
-      print("Error fetching expenses: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

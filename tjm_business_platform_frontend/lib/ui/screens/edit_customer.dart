@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tjm_business_platform/core/app_colors.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
 import 'package:tjm_business_platform/state/customer_controller.dart';
 import 'package:tjm_business_platform/ui/components/app_button.dart';
@@ -115,6 +114,7 @@ class _EditCustomerState extends State<EditCustomer> {
   }
 
   Widget _formContent() {
+    var colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,7 +123,7 @@ class _EditCustomerState extends State<EditCustomer> {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               AppStrings.errorOnSaveCustomer,
-              style: TextStyle(color: AppColors.seedColor.error),
+              style: TextStyle(color: colors.error),
             ),
           ),
         if (saved)
@@ -131,7 +131,7 @@ class _EditCustomerState extends State<EditCustomer> {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               AppStrings.customerSaveSuccess,
-              style: TextStyle(color: AppColors.seedColor.primary),
+              style: TextStyle(color: colors.primary),
             ),
           ),
         TextField(
@@ -155,11 +155,10 @@ class _EditCustomerState extends State<EditCustomer> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AppButton(text: AppStrings.saveCustomer, onPressed: _saveCustomer),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
             AppButton(
               text: AppStrings.deleteCustomer,
               onPressed: _deleteCustomer,
-              backgroundColor: AppColors.seedColor.onSecondary,
             ),
           ],
         ),
