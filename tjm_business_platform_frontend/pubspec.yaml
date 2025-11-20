@@ -1,6 +1,6 @@
 name: tjm_business_platform
 description: "TJM Business Platform"
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -12,7 +12,6 @@ dependencies:
     path: ../tjm_business_platform_logic
   flutter:
     sdk: flutter
-  intl: ^0.20.2
   window_manager: ^0.5.1
   uuid: ^4.5.2
   flutter_launcher_icons: ^0.14.4
@@ -27,4 +26,3 @@ flutter:
 
   assets:
     - assets/images/
-

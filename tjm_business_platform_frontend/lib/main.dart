@@ -5,7 +5,6 @@ import 'package:tjm_business_platform/ui/screens/login_screen.dart';
 import 'package:tjm_business_platform/secrets.dart';
 import 'package:tjm_business_platform_logic/data/client/client_loader.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 const double width = 1200;
 const double height = 720;
@@ -16,7 +15,6 @@ Future<void> main() async {
     supabaseUrl: SUPABASE_URL,
     supabaseKey: SUPABASE_KEY,
   );
-  await initializeDateFormatting('es', null);
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     await windowManager.ensureInitialized();
@@ -35,13 +33,15 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: AppSettings.appName,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
-      home: const LoginScreen(),
+    return widget(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: AppSettings.appName,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
+        home: const LoginScreen(),
+      ),
     );
   }
 }
