@@ -228,6 +228,7 @@ class _CreateReportState extends State<CreateReport> {
         () => FocusScope.of(context).requestFocus(_detailFocus),
         _nameController,
         context,
+        false,
       ),
 
       Column(

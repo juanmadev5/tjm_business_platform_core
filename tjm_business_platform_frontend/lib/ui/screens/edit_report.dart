@@ -201,6 +201,7 @@ class _EditReportState extends State<EditReport> {
           () => FocusScope.of(context).requestFocus(_detailFocus),
           _nameController,
           context,
+          true,
         ),
         if (!isSearching && suggestions.isNotEmpty)
           Column(

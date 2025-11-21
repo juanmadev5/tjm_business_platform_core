@@ -7,9 +7,12 @@ TextField nameField(
   Function() onSubmitted,
   TextEditingController nameController,
   BuildContext context,
+  bool readOnly,
 ) {
   var colors = Theme.of(context).colorScheme;
   return TextField(
+    readOnly: readOnly,
+    enabled: !readOnly,
     controller: nameController,
     focusNode: focusNode,
     maxLength: 40,
