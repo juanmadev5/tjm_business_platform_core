@@ -29,7 +29,7 @@ class PlatformUser {
         case 'accountant':
           return Role.accountant;
         default:
-          throw ArgumentError('Role string not recognized: $roleString');
+          return Role.undefined;
       }
     }
 

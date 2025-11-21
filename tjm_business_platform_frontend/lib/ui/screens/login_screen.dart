@@ -16,16 +16,27 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final Auth auth = Auth();
 
-  String user = "";
-  String password = "";
+  TextEditingController userFieldController = TextEditingController();
+  TextEditingController passwordFieldController = TextEditingController();
   bool error = false;
   bool showPassword = false;
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
 
+  @override
+  void dispose() {
+    userFieldController.dispose();
+    passwordFieldController.dispose();
+    super.dispose();
+  }
+
   void _loginAction() async {
-    if (user.isNotEmpty && password.isNotEmpty) {
-      final result = await auth.login(user, password);
+    if (userFieldController.text.isNotEmpty &&
+        passwordFieldController.text.isNotEmpty) {
+      final result = await auth.login(
+        userFieldController.text,
+        passwordFieldController.text,
+      );
 
       if (!mounted) return;
 
@@ -84,6 +95,7 @@ class LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 28.0),
 
                 TextField(
+                  controller: userFieldController,
                   keyboardType: TextInputType.emailAddress,
                   focusNode: _emailFocus,
                   textInputAction: TextInputAction.next,
@@ -94,13 +106,20 @@ class LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onChanged: (value) => setState(() => user = value),
+                  onChanged: (_) {
+                    setState(() {
+                      if (error) {
+                        error = false;
+                      }
+                    });
+                  },
                   onSubmitted: (_) =>
                       FocusScope.of(context).requestFocus(_passwordFocus),
                 ),
                 const SizedBox(height: 18.0),
 
                 TextField(
+                  controller: passwordFieldController,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: !showPassword,
                   focusNode: _passwordFocus,
@@ -119,7 +138,13 @@ class LoginScreenState extends State<LoginScreen> {
                           setState(() => showPassword = !showPassword),
                     ),
                   ),
-                  onChanged: (value) => setState(() => password = value),
+                  onChanged: (_) {
+                    setState(() {
+                      if (error) {
+                        error = false;
+                      }
+                    });
+                  },
                   onSubmitted: (_) => _loginAction(),
                 ),
                 const SizedBox(height: 32.0),

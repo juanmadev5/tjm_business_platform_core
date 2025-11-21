@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
+import 'package:tjm_business_platform_logic/core/model/expense.dart';
+import 'package:tjm_business_platform_logic/core/model/report.dart';
 import 'package:tjm_business_platform_logic/domain/data.dart';
 
 class DashboardController extends ChangeNotifier {
@@ -24,26 +26,28 @@ class DashboardController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final totalIncome = await _data.getTotalIncome();
-      final totalExpenses = await _data.getTotalExpenses();
-      final netProfit = await _data.getNetProfit();
-      final totalReports = await _data.getAllReports();
-      final totalCustomers = await _data.getAllCustomers();
-      final pendingReports = await _data.getPendingReportsCount();
-      final unpaidReports = await _data.getUnpaidReportsCount();
-      final recentReports = await _data.getRecentReports();
-      final recentExpenses = await _data.getRecentExpenses();
+      final results = await Future.wait([
+        _data.getTotalIncome(),
+        _data.getTotalExpenses(),
+        _data.getNetProfit(),
+        _data.getTotalReports(),
+        _data.getTotalCustomers(),
+        _data.getPendingReportsCount(),
+        _data.getUnpaidReportsCount(),
+        _data.getRecentReports(),
+        _data.getRecentExpenses(),
+      ]);
 
       _dashboardData = DashboardDataModel(
-        totalIncome: totalIncome,
-        totalExpenses: totalExpenses,
-        netProfit: netProfit,
-        totalReports: totalReports.length,
-        totalCustomers: totalCustomers.length,
-        pendingReportsCount: pendingReports,
-        unpaidReportsCount: unpaidReports,
-        recentReports: recentReports,
-        recentExpenses: recentExpenses,
+        totalIncome: results[0] as double,
+        totalExpenses: results[1] as double,
+        netProfit: results[2] as double,
+        totalReports: results[3] as int,
+        totalCustomers: results[4] as int,
+        pendingReportsCount: results[5] as int,
+        unpaidReportsCount: results[6] as int,
+        recentReports: results[7] as List<Report>,
+        recentExpenses: results[8] as List<Expense>,
       );
     } catch (e) {
       _errorMessage = e.toString();

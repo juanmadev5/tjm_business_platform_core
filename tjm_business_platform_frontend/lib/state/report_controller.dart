@@ -25,27 +25,25 @@ class ReportController extends ChangeNotifier {
   bool get hasData => _reports.isNotEmpty;
 
   Future<void> fetchReports({bool reset = false}) async {
-    if (reset) {
-      _page = 1;
-      _hasMore = true;
-      _reports.clear();
-      notifyListeners();
-    }
-
-    _isLoading = true;
-    notifyListeners();
-
     try {
-      final newReports = await _data.getReportByPage(_page);
+      if (reset) {
+        _page = 1;
+        _hasMore = true;
+        _reports.clear();
+        notifyListeners();
+      }
 
+      _isLoading = true;
+      notifyListeners();
+
+      final newReports = await _data.getReportByPage(_page);
       if (newReports.length < 15) {
         _hasMore = false;
       }
 
       _reports.addAll(newReports);
       _page++;
-    } catch (e) {
-      print("error on fetch: $e");
+    } catch (_) {
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -82,9 +80,7 @@ class ReportController extends ChangeNotifier {
         if (exactMatch.isNotEmpty) {
           customerId = exactMatch['id']!;
         }
-      } catch (e) {
-        print("Error checking existing customer: $e");
-      }
+      } catch (_) {}
     }
 
     if (customerId.isEmpty) {

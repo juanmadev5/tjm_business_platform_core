@@ -38,7 +38,7 @@ class _EditReportState extends State<EditReport> {
   final FocusNode _priceFocus = FocusNode();
 
   final ReportController _controller = ReportController();
-  final Data data = Data(); // Still needed for customer search
+  final Data data = Data();
   bool error = false;
   bool saved = false;
 
@@ -46,7 +46,6 @@ class _EditReportState extends State<EditReport> {
   void initState() {
     super.initState();
 
-    // Inicializamos los controllers con los datos existentes
     _nameController = TextEditingController(
       text: widget.reportToEdit.customerName,
     );
@@ -159,7 +158,15 @@ class _EditReportState extends State<EditReport> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text(AppStrings.editReport)),
+      appBar: AppBar(
+        title: Text(AppStrings.editReport),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: insets,

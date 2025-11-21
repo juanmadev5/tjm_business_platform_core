@@ -9,9 +9,10 @@ environment:
 dependencies:
   intl: ^0.20.2
   supabase: ^2.10.0
+  logger: ^2.6.2
 
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
-  mockito: ^5.5.1 
-  build_runner: ^2.10.3 
+  mockito: ^5.5.1
+  build_runner: ^2.10.3

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tjm_business_platform/core/app_strings.dart';
-import 'package:tjm_business_platform/ui/model/dashboard_data_model.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_item.dart';
 import 'package:tjm_business_platform/ui/navigation/navigation_items_provider.dart';
 import 'package:tjm_business_platform/ui/screens/all_customers.dart';
@@ -31,40 +30,12 @@ class _MainScreenState extends State<MainScreen> {
   PlatformUser? user;
   bool isLoading = true;
   String? errorMessage;
-  DashboardDataModel? dashboardData;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    final totalIncome = await data.getTotalIncome();
-    final totalExpenses = await data.getTotalExpenses();
-    final netProfit = await data.getNetProfit();
-    final totalReports = await data.getAllReports();
-    final totalCustomers = await data.getAllCustomers();
-    final pendingCount = await data.getPendingReportsCount();
-    final unpaidCount = await data.getUnpaidReportsCount();
-    final recentReports = await data.getRecentReports(limit: 5);
-    final recentExpenses = await data.getRecentExpenses(limit: 5);
-
-    setState(() {
-      dashboardData = DashboardDataModel(
-        totalIncome: totalIncome,
-        totalExpenses: totalExpenses,
-        netProfit: netProfit,
-        totalReports: totalReports.length,
-        totalCustomers: totalCustomers.length,
-        pendingReportsCount: pendingCount,
-        unpaidReportsCount: unpaidCount,
-        recentReports: recentReports,
-        recentExpenses: recentExpenses,
-      );
-    });
   }
 
   Future<void> _loadUserProfile() async {
@@ -85,7 +56,7 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage = 'Error al cargar el perfil: $e';
+        errorMessage = AppStrings.userNotFound;
       });
     }
   }

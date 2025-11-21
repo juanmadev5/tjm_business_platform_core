@@ -1,1 +1,1 @@
-enum Role { admin, user, accountant }
+enum Role { admin, user, accountant, undefined }

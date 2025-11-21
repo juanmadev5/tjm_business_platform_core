@@ -6,5 +6,6 @@ String getRole(Role role) {
     Role.admin => AppStrings.admin,
     Role.user => AppStrings.user,
     Role.accountant => AppStrings.accountant,
+    Role.undefined => 'undefined',
   };
 }

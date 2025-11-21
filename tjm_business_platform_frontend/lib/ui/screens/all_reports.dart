@@ -40,17 +40,23 @@ class _AllReportsState extends State<AllReports> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _controller.fetchReports(
+      reset: true,
+    ); // reset to get latest data if a report is modified
     super.dispose();
   }
 
   Future<void> _openEditReport(Report report) async {
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => EditReport(reportToEdit: report, user: widget.user),
       ),
     );
-    // Controller handles updates
+
+    if (result == true) {
+      _controller.fetchReports(reset: true);
+    }
   }
 
   @override

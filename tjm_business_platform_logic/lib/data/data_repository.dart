@@ -1,4 +1,3 @@
-import 'package:tjm_business_platform_logic/domain/auth.dart';
 import 'package:supabase/supabase.dart';
 import '../core/action_result.dart';
 import '../core/model/customer.dart';
@@ -18,8 +17,6 @@ class DataRepository {
     client = supabaseClient;
   }
 
-  Auth auth = Auth();
-
   Future<List<Report>> getAllReports() async {
     try {
       final response = await client!
@@ -29,8 +26,7 @@ class DataRepository {
       return (response as List).map((json) {
         return Report.fromJson(json);
       }).toList();
-    } catch (e) {
-      print('Error fetching reports: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -50,8 +46,7 @@ class DataRepository {
       return (response as List).map((json) {
         return Report.fromJson(json);
       }).toList();
-    } catch (e) {
-      print('Error fetching paginated reports: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -60,9 +55,26 @@ class DataRepository {
     try {
       final response = await client!.from('customers').select();
       return (response as List).map((json) => Customer.fromJson(json)).toList();
-    } catch (e) {
-      print('Error fetching customers: $e');
+    } catch (_) {
       return [];
+    }
+  }
+
+  Future<int> getTotalCustomers() async {
+    try {
+      final response = await client!.from('customers').select('id').count();
+      return response.count;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  Future<int> getTotalReports() async {
+    try {
+      final response = await client!.from('reports').select('id').count();
+      return response.count;
+    } catch (_) {
+      return 0;
     }
   }
 
@@ -78,8 +90,7 @@ class DataRepository {
           .range(from, to);
 
       return (response as List).map((json) => Customer.fromJson(json)).toList();
-    } catch (e) {
-      print('Error fetching customers: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -96,8 +107,7 @@ class DataRepository {
           .range(from, to);
 
       return (response as List).map((json) => Expense.fromJson(json)).toList();
-    } catch (e) {
-      print('Error fetching paginated expenses: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -106,8 +116,7 @@ class DataRepository {
     try {
       await client!.from('customers').insert(newCustomer.toMap());
       return ActionResult.ok;
-    } on PostgrestException catch (e) {
-      print('Error adding new customer: ${e.message}');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -140,11 +149,7 @@ class DataRepository {
       await client!.from('reports').insert(newReport.toMap());
 
       return ActionResult.ok;
-    } on PostgrestException catch (e) {
-      print("DB error saving report: ${e.message}");
-      return ActionResult.error;
-    } catch (e) {
-      print("Unexpected error saving report: $e");
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -153,8 +158,7 @@ class DataRepository {
     try {
       await client!.from('expenses').insert(newExpense.toMap());
       return ActionResult.ok;
-    } catch (e) {
-      print('Error adding new expense: $e');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -177,8 +181,7 @@ class DataRepository {
             },
           )
           .toList();
-    } catch (e) {
-      print('Error finding customers: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -187,8 +190,7 @@ class DataRepository {
     try {
       await client!.from('reports').delete().eq('id', reportId);
       return ActionResult.ok;
-    } catch (e) {
-      print('Error deleting report: $e');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -197,8 +199,7 @@ class DataRepository {
     try {
       await client!.from('customers').delete().eq('id', customerId);
       return ActionResult.ok;
-    } catch (e) {
-      print('Error deleting customer: $e');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -211,8 +212,7 @@ class DataRepository {
           .eq('id', updatedCustomer.id);
 
       return ActionResult.ok;
-    } catch (e) {
-      print('Error editing customer: $e');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -225,8 +225,7 @@ class DataRepository {
           .eq('id', updatedReport.id);
 
       return ActionResult.ok;
-    } catch (e) {
-      print('Error editing report: $e');
+    } catch (_) {
       return ActionResult.error;
     }
   }
@@ -248,8 +247,7 @@ class DataRepository {
       );
 
       return total;
-    } catch (e) {
-      print('Error getting total income: $e');
+    } catch (_) {
       return 0.0;
     }
   }
@@ -268,8 +266,7 @@ class DataRepository {
       );
 
       return total;
-    } catch (e) {
-      print('Error getting total expenses: $e');
+    } catch (_) {
       return 0.0;
     }
   }
@@ -287,8 +284,7 @@ class DataRepository {
           .select('id')
           .eq('is_pending', true);
       return (response as List).length;
-    } catch (e) {
-      print('Error getting pending reports count: $e');
+    } catch (_) {
       return 0;
     }
   }
@@ -300,8 +296,7 @@ class DataRepository {
           .select('id')
           .eq('is_paid', false);
       return (response as List).length;
-    } catch (e) {
-      print('Error getting unpaid reports count: $e');
+    } catch (_) {
       return 0;
     }
   }
@@ -317,8 +312,7 @@ class DataRepository {
       return (response as List).map((json) {
         return Report.fromJson(json);
       }).toList();
-    } catch (e) {
-      print('Error fetching recent reports: $e');
+    } catch (_) {
       return [];
     }
   }
@@ -331,8 +325,7 @@ class DataRepository {
           .order('created_at', ascending: false)
           .limit(limit);
       return (response as List).map((json) => Expense.fromJson(json)).toList();
-    } catch (e) {
-      print('Error fetching recent expenses: $e');
+    } catch (_) {
       return [];
     }
   }

@@ -20,13 +20,17 @@ class AuthRepository {
   }
 
   Future<ActionResult> login(String email, String password) async {
-    final res = await client!.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    if (res.user != null) {
-      currentUser = res.user;
-      return ActionResult.ok;
+    try {
+      final res = await client!.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      if (res.user != null) {
+        currentUser = res.user;
+        return ActionResult.ok;
+      }
+    } catch (e) {
+      return ActionResult.error;
     }
     return ActionResult.error;
   }
@@ -49,7 +53,6 @@ class AuthRepository {
 
       return PlatformUser.fromJson(response);
     } catch (e) {
-      print('Error fetching user profile: $e');
       return null;
     }
   }
