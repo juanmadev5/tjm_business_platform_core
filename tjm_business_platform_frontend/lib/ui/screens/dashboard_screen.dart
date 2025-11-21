@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   title: Text(report.customerName),
                   subtitle: Text(
-                    report.workDetails,
+                    report.detail,
                     style: TextStyle(overflow: .ellipsis),
                   ),
                   trailing: Text(formatDoubleToGs(report.price)),

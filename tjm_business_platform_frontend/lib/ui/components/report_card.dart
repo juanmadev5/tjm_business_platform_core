@@ -17,6 +17,10 @@ class ReportCard extends StatelessWidget {
       decimalDigits: 0,
     );
 
+    final rawDate = report.createdAt!;
+    final iso = rawDate.replaceAll(' ', 'T');
+    final date = DateTime.parse(iso);
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -53,7 +57,7 @@ class ReportCard extends StatelessWidget {
                                     SizedBox(
                                       width: 150,
                                       child: Text(
-                                        report.workDetails,
+                                        report.detail,
                                         style: const TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey,
@@ -86,9 +90,7 @@ class ReportCard extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      DateFormat(
-                                        'dd/MM/yyyy',
-                                      ).format(report.createdAt),
+                                      DateFormat('dd/MM/yyyy').format(date),
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

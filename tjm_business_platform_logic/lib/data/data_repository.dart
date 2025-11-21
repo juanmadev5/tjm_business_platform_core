@@ -27,10 +27,7 @@ class DataRepository {
           .select('*, customers(name)');
 
       return (response as List).map((json) {
-        final customerData = json['customers'] as Map<String, dynamic>?;
-        final customerName = customerData?['name'] as String? ?? 'N/A';
-
-        return Report.fromJson(json, customerName: customerName);
+        return Report.fromJson(json);
       }).toList();
     } catch (e) {
       print('Error fetching reports: $e');
@@ -47,14 +44,11 @@ class DataRepository {
       final response = await client!
           .from('reports')
           .select('*, customers(name)')
-          .range(from, to)
+          .range(0, to)
           .order('created_at', ascending: false);
 
       return (response as List).map((json) {
-        final customerData = json['customers'] as Map<String, dynamic>?;
-        final customerName = customerData?['name'] as String? ?? 'N/A';
-
-        return Report.fromJson(json, customerName: customerName);
+        return Report.fromJson(json);
       }).toList();
     } catch (e) {
       print('Error fetching paginated reports: $e');
@@ -135,6 +129,7 @@ class DataRepository {
               'id': customerId,
               'name': newReport.customerName,
               'phone_number': "",
+              'email': "",
             })
             .select()
             .single();
@@ -320,9 +315,7 @@ class DataRepository {
           .limit(limit);
 
       return (response as List).map((json) {
-        final customerData = json['customers'] as Map<String, dynamic>?;
-        final customerName = customerData?['name'] as String? ?? 'N/A';
-        return Report.fromJson(json, customerName: customerName);
+        return Report.fromJson(json);
       }).toList();
     } catch (e) {
       print('Error fetching recent reports: $e');

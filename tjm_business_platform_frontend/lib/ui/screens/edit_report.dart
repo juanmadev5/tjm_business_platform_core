@@ -123,6 +123,7 @@ class _EditReportState extends State<EditReport> {
       price: double.parse(formattedPrice.toString()),
       isPending: !isCompleted,
       isPaid: isPaid,
+      createdAt: null,
     );
 
     if (_nameController.text.isNotEmpty &&

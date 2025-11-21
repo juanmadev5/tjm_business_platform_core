@@ -32,8 +32,6 @@ class ReportController extends ChangeNotifier {
       notifyListeners();
     }
 
-    if (_isLoading || !_hasMore) return;
-
     _isLoading = true;
     notifyListeners();
 
@@ -46,6 +44,8 @@ class ReportController extends ChangeNotifier {
 
       _reports.addAll(newReports);
       _page++;
+    } catch (e) {
+      print("error on fetch: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -100,6 +100,7 @@ class ReportController extends ChangeNotifier {
       price: price,
       isPending: !isCompleted,
       isPaid: isPaid,
+      createdAt: null,
     );
 
     return await addReport(newReport);

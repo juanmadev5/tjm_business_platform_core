@@ -7,6 +7,7 @@ class Report {
   final double price;
   final bool isPending;
   final bool isPaid;
+  final String? createdAt;
 
   Report({
     required this.id,
@@ -17,59 +18,37 @@ class Report {
     required this.price,
     required this.isPending,
     required this.isPaid,
+    required this.createdAt,
   });
 
+  // isn't necessary to return an id in the map because this field by default is [gen_random_uuid] in database
   Map<String, dynamic> toMap() {
     return {
-      'id': id.isEmpty ? null : id,
       'author': author,
       'customer_id': customerId,
       'detail': detail,
       'price': price,
       'is_pending': isPending,
       'is_paid': isPaid,
+      'created_at': DateTime.now().toString(),
     };
   }
 
-  factory Report.fromJson(Map<String, dynamic> json, {String? customerName}) {
+  factory Report.fromJson(Map<String, dynamic> json) {
     final priceValue = json['price'] is int
         ? (json['price'] as int).toDouble()
         : json['price'] as double;
 
     return Report(
-      id: json['id'] as String,
-      author: json['author'] as String,
-      customerId: json['customer_id'] as String,
-      customerName: customerName ?? 'Unknown',
-      detail: json['detail'] as String,
+      id: "${json['id']}",
+      author: "${json['author']}",
+      customerId: "${json['customer_id']}",
+      customerName: "${json['customers']['name']}",
+      detail: "${json['detail']}",
       price: priceValue,
       isPending: json['is_pending'] as bool,
       isPaid: json['is_paid'] as bool,
+      createdAt: json['created_at'],
     );
   }
-
-  Report copyWith({
-    String? id,
-    String? author,
-    String? customerId,
-    String? customerName,
-    String? detail,
-    double? price,
-    bool? isPending,
-    bool? isPaid,
-  }) {
-    return Report(
-      id: id ?? this.id,
-      author: author ?? this.author,
-      customerId: customerId ?? this.customerId,
-      customerName: customerName ?? this.customerName,
-      detail: detail ?? this.detail,
-      price: price ?? this.price,
-      isPending: isPending ?? this.isPending,
-      isPaid: isPaid ?? this.isPaid,
-    );
-  }
-
-  String get workDetails => detail;
-  DateTime get createdAt => DateTime.now(); // Placeholder
 }
