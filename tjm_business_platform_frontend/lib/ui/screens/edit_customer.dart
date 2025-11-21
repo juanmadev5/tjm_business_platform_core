@@ -159,6 +159,8 @@ class _EditCustomerState extends State<EditCustomer> {
             AppButton(
               text: AppStrings.deleteCustomer,
               onPressed: _deleteCustomer,
+              backgroundColor: colors.errorContainer,
+              textColor: colors.onErrorContainer,
             ),
           ],
         ),

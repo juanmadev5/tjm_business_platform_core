@@ -216,7 +216,6 @@ class _MainScreenState extends State<MainScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Material(
-                  color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
                       auth.logout();
@@ -232,7 +231,7 @@ class _MainScreenState extends State<MainScreen> {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.onSecondary,
+                        color: colors.secondary,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -241,14 +240,14 @@ class _MainScreenState extends State<MainScreen> {
                           Icon(
                             Icons.logout_rounded,
                             size: 20,
-                            color: colors.onSurface,
+                            color: colors.onSecondary,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.logout,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: colors.onSurface,
+                              color: colors.onSecondary,
                             ),
                           ),
                         ],

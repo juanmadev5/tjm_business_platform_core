@@ -279,7 +279,8 @@ class _EditReportState extends State<EditReport> {
               AppButton(
                 text: AppStrings.deleteReport,
                 onPressed: () => _deleteReport(widget.reportToEdit),
-                backgroundColor: colors.onSecondary,
+                backgroundColor: colors.errorContainer,
+                textColor: colors.onErrorContainer,
               ),
             ],
           ),

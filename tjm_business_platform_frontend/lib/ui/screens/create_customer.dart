@@ -147,7 +147,6 @@ class _CreateCustomerState extends State<CreateCustomer> {
             height: 48,
             child: AppButton(
               onPressed: _saveCustomer,
-              icon: Icons.save,
               text: AppStrings.saveCustomer,
             ),
           ),

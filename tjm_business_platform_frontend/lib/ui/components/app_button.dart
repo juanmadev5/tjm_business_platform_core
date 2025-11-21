@@ -20,14 +20,14 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     var colors = Theme.of(context).colorScheme;
     final style = ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor ?? colors.onSecondary,
+      backgroundColor: backgroundColor ?? colors.secondary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     );
 
     final label = Text(
       text,
-      style: TextStyle(fontSize: 16, color: textColor ?? Colors.white),
+      style: TextStyle(fontSize: 16, color: textColor ?? colors.onSecondary),
     );
 
     if (icon != null) {
