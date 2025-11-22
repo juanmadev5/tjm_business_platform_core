@@ -100,10 +100,9 @@ To run this project locally, follow these steps:
             'admin'                    -- role
         );
     ```
-    Always follow steps `3` and `4` if you want to add more users.
-    Use role `admin` to have full platform control.
-    
-6.  **Put secrets on the app**:
+    Always follow steps `3` and `4` if you want to add more users to access the platform.
+
+7.  **Put secrets on the app**:
     Create a `secrets.dart` at `tjm_business_platform_frontend/lib` and put:
     ```dart
       String SUPABASE_URL = "https://yourprojecturl.supabase.co";
@@ -114,9 +113,18 @@ To run this project locally, follow these steps:
     
     Then put the Project ID and API Key on `SUPABASE_URL` and `SUPABASE_KEY` respective.
 
+## Platform roles
+
+`admin` have full platform control.
+
+`user` only have access to create, edit, delete reports and clients.
+
+`accountant` only have access to view business state and reguster purchases.
+
+
 ## Customize the platform for your business
 
-You can go to `tjm_business_platform_frontend/lib/core/app_settings.dart` and change the app name by your own business name or change the number format.
+You can go to `tjm_business_platform_frontend/lib/core/app_settings.dart` and change the app name by your own business name, change the number format or even app pallet colors. Get a custom one from [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
 
 Also you can go to `tjm_business_platform_frontend/assets/` and change the app icon and the businnes logo. If you change the app's icon, ensure to run `dart run flutter_launcher_icons -f flutter_launcher_icons.yaml` and then compile the app.
 
