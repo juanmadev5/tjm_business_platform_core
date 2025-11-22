@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AppSettings {
+  // desktop specific window size
+  static final double width = 1200;
+  static final double height = 720;
+
   static final String appName = "TJM Business Platform";
   static final String companyLogoAsset = "assets/images/business_logo.jpg";
   static final priceFormat = NumberFormat("#,###", "es_PY");
